@@ -2,8 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Mobile Layout with Media Queries</title>
+  <!-- 모바일 디바이스에서 초기 스케일 고정 -->
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mobile Layout - Fullscreen</title>
   <style>
     /* Pretendard Light (300) */
     @font-face {
@@ -27,34 +29,27 @@
       font-style: normal;
     }
 
-    /*
-      기본 스타일
-      ----------------------------------
-      - 가로를 모바일 화면(100vw)에 꽉 맞추고,
-      - 세로 자동 (aspect-ratio: 402 / 874)
-      - 내부는 px 절대배치이므로, 필요하다면 % 단위 변환
-    */
+    /* 페이지 전체 스타일 */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
+      overflow: hidden; /* 스크롤 제거 */
       background: #FFFFFF;
-      overflow: auto;
-      font-family: Pretendard;
     }
 
+    /* 402x874 고정이 아니라, 기기 전체 화면을 차지하도록 100vw x 100vh */
     .frame-wrapper {
       width: 100vw;
-      height: auto;
-      aspect-ratio: 402 / 874;
-      position: relative;
+      height: 100vh;
+      position: relative; /* 내부 요소 배치용 */
+      overflow: hidden;   /* 스크롤 숨김 */
       background: #FFFFFF;
       box-shadow: 0 0 8px rgba(0,0,0,0.2);
-      overflow: hidden;
     }
 
-    /* 버튼, 입력창, 텍스트 등 */
+    /* 기존 버튼/입력창 스타일 */
     .gender-btn {
       flex: 1;
       margin: 0 5px;
@@ -62,6 +57,7 @@
       border: 0.5px solid black;
       border-radius: 4px;
       background: white;
+      font-family: Pretendard;
       font-weight: 500;
       font-size: 16px;
       cursor: pointer;
@@ -78,6 +74,7 @@
       border: 0.5px solid black;
       border-radius: 4px;
       background: white;
+      font-family: Pretendard;
       font-weight: 500;
       font-size: 14px;
       cursor: pointer;
@@ -87,14 +84,13 @@
       color: white;
       border: 0.5px solid #208FFF;
     }
-    .name-input,
-    .gender-input,
-    .age-input {
+    .name-input, .gender-input, .age-input {
       width: 368px;
       border: 0.5px solid black;
       border-radius: 4px;
       padding: 14px;
       font-size: 16px;
+      font-family: Pretendard;
       font-weight: 300;
       color: black;
       background: white;
@@ -104,7 +100,6 @@
     .gender-input {
       margin-bottom: 20px;
     }
-
     .slide-down {
       transform: translateY(50px);
       opacity: 0;
@@ -119,17 +114,32 @@
       opacity: 1;
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
-    .name-label, .gender-label, .age-label {
+    #stepContainer .name-label, #stepContainer .gender-label, #stepContainer .age-label {
+      font-family: Pretendard;
       font-weight: 500;
       font-size: 12pt;
       margin-bottom: 5px;
       transition: transform 0.5s ease, opacity 0.5s ease;
     }
-    .gender-container, .age-container {
+    #stepContainer .gender-container, #stepContainer .age-container {
       display: flex;
       justify-content: space-between;
       width: 100%;
       margin-bottom: 20px;
+    }
+    #page2Header {
+      position: absolute;
+      top: 77px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: black;
+      font-size: 20px;
+      font-family: Pretendard;
+      font-weight: 700;
+      line-height: 32px;
+      width: 100%;
+      max-width: 370px;
     }
     .terms-container {
       display: flex;
@@ -141,86 +151,49 @@
       margin-right: 10px;
     }
     .terms-text {
+      font-family: Pretendard;
       font-weight: 300;
       font-size: 12px;
       color: #666;
       line-height: 18px;
       text-align: left;
     }
-
-    #page2Header {
-      position: absolute;
-      top: 54px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      color: black;
-      font-size: 20px;
-      font-weight: 700;
-      line-height: 32px;
-      width: 100%;
-      max-width: 370px;
-    }
-
-    /* 미디어 쿼리 - 예시 */
-    /* 화면 폭이 480px 이하일 때 폰트 크기, 입력창 너비 등 조정 */
-    @media (max-width: 480px) {
-      #page2Header {
-        top: 40px;
-        font-size: 18px;
-      }
-      .name-input,
-      .gender-input,
-      .age-input {
-        width: 85%; /* 화면 폭이 좁아지므로 고정 368px 대신 85% 등으로 축소 */
-      }
-      .gender-btn, .age-btn {
-        font-size: 14px;
-        padding: 8px;
-      }
-    }
-
-    /* 화면 폭이 768px 이상일 때(예: 태블릿 가로) 폰트, 너비 확대 */
-    @media (min-width: 768px) {
-      #page2Header {
-        font-size: 22px;
-      }
-      .name-input,
-      .gender-input,
-      .age-input {
-        font-size: 18px;
-        width: 380px;
-      }
-      .gender-btn, .age-btn {
-        font-size: 16px;
-        padding: 12px;
-      }
-    }
   </style>
 </head>
 <body>
-  <!-- frame-wrapper: 가로 100vw, 세로 aspect-ratio(402:874) -->
+  <!-- .frame-wrapper: 100vw x 100vh -->
   <div class="frame-wrapper" id="page2">
+    <!-- 내부는 기존처럼 절대 배치(px) -->
     <div style="width:402px; height:874px; position:absolute; top:0; left:0;">
-      <!-- Header -->
-      <div id="page2Header" class="header-slide-in">
+      <!-- Header 영역 -->
+      <div style="position:absolute; top:54px; left:0; width:402px; height:48px; background:white;"></div>
+      <div id="page2Header">
         반가워요!<br/>아이의 이름이 무엇인가요?
       </div>
 
       <!-- 이전 버튼 -->
       <div id="prevBtn"
-           style="position:absolute; left:17px; top:795px; width:82px; height:35px; padding:1px 46px; background:white; border-radius:8px; border:0.5px solid black; display:flex; justify-content:center; align-items:center; cursor:pointer;"
+           style="position:absolute; left:17px; top:795px; width:82px; height:35px; padding:1px 46px;
+                  background:white; border-radius:8px; border:0.5px solid black;
+                  display:flex; justify-content:center; align-items:center; cursor:pointer;"
            onclick="prevStep()">
-        <div style="color:black; font-size:16px; font-weight:500;">이전</div>
+        <div style="color:black; font-size:16px; font-family:Pretendard; font-weight:500;">이전</div>
       </div>
+
       <!-- 다음 버튼 -->
       <div id="nextBtn"
-           style="position:absolute; left:209px; top:795px; width:82px; height:35px; padding:1px 46px; background:#208FFF; border-radius:8px; display:flex; justify-content:center; align-items:center; cursor:pointer;"
+           style="position:absolute; left:209px; top:795px; width:82px; height:35px; padding:1px 46px;
+                  background:#208FFF; border-radius:8px; display:flex;
+                  justify-content:center; align-items:center; cursor:pointer;"
            onclick="nextStep()">
-        <div style="color:white; font-size:16px; font-weight:500;" id="nextBtnText">다음</div>
+        <div style="color:white; font-size:16px; font-family:Pretendard; font-weight:500;" id="nextBtnText">
+          다음
+        </div>
       </div>
+
       <!-- Step Container -->
       <div id="stepContainer" style="position:absolute; left:16px; top:193px; width:370px;">
+        <!-- Step 1: 이름 입력 -->
         <input type="text" id="childName" placeholder="살콩이" class="name-input">
       </div>
       <div id="nameWarning" style="position:absolute; left:16px; top:248px; color:red; font-size:12px; display:none;">
@@ -230,6 +203,11 @@
   </div>
 
   <script>
+    // ratio(402x874)는 무시.
+    // 지금은 frame-wrapper가 화면 전체(100vw x 100vh)를 차지하고,
+    // 내부에 절대 배치된 402x874 영역이 그대로 표시됩니다.
+    // (비율 강제 없음, 스크롤 없음, 무조건 화면을 채움)
+
     var currentStep = 1;
     var selectedGender = "";
     var selectedAge = "";
@@ -645,6 +623,7 @@
           const genderContainer = stepContainer.querySelector(".gender-container");
           const nameLabel = stepContainer.querySelector(".name-label");
           const nameInput = stepContainer.querySelector(".name-input");
+
           genderContainer.classList.add("slide-down");
           nameLabel.classList.add("slide-down");
           nameInput.classList.add("slide-down");
@@ -666,6 +645,7 @@
           }, 500);
         }, 300);
       } else {
+        // 처음 페이지(index.html)로 이동
         window.location.href = "index.html";
       }
     }
