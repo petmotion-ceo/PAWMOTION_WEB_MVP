@@ -2,10 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <!-- user-scalable=no : 모바일 줌 비활성화 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Mobile Layout with Local Fonts - Page 2</title>
-
+  <!-- 모바일 디바이스에서 초기 스케일 고정 -->
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mobile Layout - Fixed Ratio</title>
   <style>
     /* Pretendard Light (300) */
     @font-face {
@@ -29,48 +29,31 @@
       font-style: normal;
     }
 
-    /*
-      (1) html, body => 스크롤 없이 전체 화면
-      (2) .frame-wrapper => 402×804
-      (3) 기기가 작으면 scale
-      (4) 상단/하단 여백 + header & 버튼 위치
-      (5) 아이 이름 입력시 모든 요소 이동 제거
-         => 애니메이션 최소화
-    */
-
+    /* 페이지 전체 스타일 - 스크롤 없애고 화면에 고정 */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      box-sizing: border-box;
-      overflow: hidden;
+      overflow: hidden; /* 스크롤 제거 */
       background: #F0F0F0;
     }
 
+    /* 실제 디자인 크기(402x874)를 갖는 프레임을 절대 배치 */
     .frame-wrapper {
-      position: absolute;
       width: 402px;
-      height: 804px;
+      height: 874px;
+      position: absolute;
+      top: 50%;       /* 화면 중앙 정렬 */
       left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      transform-origin: top left;
+      transform: translate(-50%, -50%) scale(1); /* scale(1)은 초기값 */
+      transform-origin: center center;  /* 스케일 기준점 */
       background: #FFFFFF;
-      overflow: hidden;
       box-shadow: 0 0 8px rgba(0,0,0,0.2);
+      overflow: hidden;
     }
 
-    /* 기기 폭/높이 중 더 작은 비율로 축소 => 스크롤 없이 한 화면 표시 */
-    @media (max-width: 402px), (max-height: 804px) {
-      .frame-wrapper {
-        transform: translate(-50%, -50%) scale(
-          min(calc(100vw / 402), calc(100vh / 804))
-        );
-      }
-    }
-
-    /* 버튼 등 스타일 */
+    /* 버튼, 입력창 등 기존 스타일은 그대로 유지 */
     .gender-btn {
       flex: 1;
       margin: 0 5px;
@@ -88,7 +71,6 @@
       color: white;
       border: 0.5px solid #208FFF;
     }
-
     .age-btn {
       flex: 1;
       margin: 0 5px;
@@ -106,7 +88,6 @@
       color: white;
       border: 0.5px solid #208FFF;
     }
-
     .name-input, .gender-input, .age-input {
       width: 368px;
       border: 0.5px solid black;
@@ -118,46 +99,41 @@
       color: black;
       background: white;
       box-sizing: border-box;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+    .gender-input {
       margin-bottom: 20px;
     }
-
-    #stepContainer .name-label,
-    #stepContainer .gender-label,
-    #stepContainer .age-label {
+    .slide-down {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    .header-slide-out {
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .header-slide-in {
+      transform: translateY(0);
+      opacity: 1;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    #stepContainer .name-label, #stepContainer .gender-label, #stepContainer .age-label {
+      font-family: Pretendard;
+      font-weight: 500;
+      font-size: 12pt;
       margin-bottom: 5px;
+      transition: transform 0.5s ease, opacity 0.5s ease;
     }
-
-    /* (기존) 애니메이션 최소화 => 제거 */
-    .header-slide-out, .header-slide-in, .slide-down {
-      transition: none;
-    }
-
-    #stepContainer .gender-container,
-    #stepContainer .age-container {
+    #stepContainer .gender-container, #stepContainer .age-container {
       display: flex;
       justify-content: space-between;
       width: 100%;
       margin-bottom: 20px;
     }
-
-    /*
-      상단 white bar: top:30
-      header: top:90 => "반가워요"
-      stepContainer: top:160
-      이전/다음 버튼: top:720 (804 - 720 = 84px bottom여백)
-    */
-    .top-bar {
-      position: absolute;
-      top: 30px;
-      left: 0;
-      width: 402px;
-      height: 48px;
-      background: white;
-    }
-
     #page2Header {
       position: absolute;
-      top: 90px;
+      top: 77px;
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
@@ -169,43 +145,6 @@
       width: 100%;
       max-width: 370px;
     }
-
-    .nav-btn {
-      position: absolute;
-      top: 720px;
-      width: 82px;
-      height: 35px;
-      padding: 1px 46px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
-    #prevBtn {
-      left: 17px;
-      background: white;
-      border: 0.5px solid black;
-    }
-    #nextBtn {
-      left: 209px;
-      background: #208FFF;
-      border: none;
-    }
-
-    .btn-text {
-      font-size: 16px;
-      font-family: Pretendard;
-      font-weight: 500;
-      line-height: 24px;
-    }
-    #prevBtn .btn-text {
-      color: black;
-    }
-    #nextBtn .btn-text {
-      color: white;
-    }
-
     .terms-container {
       display: flex;
       align-items: center;
@@ -226,42 +165,57 @@
   </style>
 </head>
 <body>
+  <!-- 프레임 래퍼 -->
   <div class="frame-wrapper" id="page2">
-    <div style="width:402px; height:804px; position:relative;">
-      <!-- 상단 바 -->
-      <div class="top-bar"></div>
-
+    <div style="width:402px; height:874px; position:relative;">
+      <div style="position:absolute; top:54px; left:0; width:402px; height:48px; background:white;"></div>
       <!-- Header -->
       <div id="page2Header">
-        반가워요!<br/>
-        아이의 이름이 무엇인가요?
+        반가워요!<br/>아이의 이름이 무엇인가요?
       </div>
-
-      <!-- 이전/다음 버튼 -->
-      <div id="prevBtn" class="nav-btn" onclick="prevStep()">
-        <div class="btn-text">이전</div>
+      <!-- Previous button -->
+      <div id="prevBtn"
+           style="position:absolute; left:17px; top:795px; width:82px; height:35px; padding:1px 46px; background:white; border-radius:8px; border:0.5px solid black; display:flex; justify-content:center; align-items:center; cursor:pointer;"
+           onclick="prevStep()">
+        <div style="color:black; font-size:16px; font-family:Pretendard; font-weight:500;">이전</div>
       </div>
-      <div id="nextBtn" class="nav-btn" onclick="nextStep()">
-        <div class="btn-text" id="nextBtnText">다음</div>
+      <!-- Next button (티켓 만들기 버튼으로 사용) -->
+      <div id="nextBtn"
+           style="position:absolute; left:209px; top:795px; width:82px; height:35px; padding:1px 46px; background:#208FFF; border-radius:8px; display:flex; justify-content:center; align-items:center; cursor:pointer;"
+           onclick="nextStep()">
+        <div style="color:white; font-size:16px; font-family:Pretendard; font-weight:500;" id="nextBtnText">다음</div>
       </div>
-
       <!-- Step Container -->
-      <div id="stepContainer" style="position:absolute; left:16px; top:160px; width:370px;">
+      <div id="stepContainer" style="position:absolute; left:16px; top:193px; width:370px;">
         <!-- Step 1: 이름 입력 -->
         <input type="text" id="childName" placeholder="살콩이" class="name-input">
       </div>
-      <div id="nameWarning" style="position:absolute; left:16px; top:215px; color:red; font-size:12px; display:none;">
+      <div id="nameWarning" style="position:absolute; left:16px; top:248px; color:red; font-size:12px; display:none;">
         아이 이름을 입력해주세요!
       </div>
     </div>
   </div>
 
   <script>
-    var currentStep = 1; // 1: 이름 입력, 2: 성별, 3: 나이, 4: 정보 확인
+    // 화면 크기에 맞춰 .frame-wrapper를 자동으로 scale 해주는 함수
+    function scaleFrame() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      // 402 x 874 비율 기준으로 최소값으로 스케일 결정
+      var scaleValue = Math.min(w / 402, h / 874);
+      var frameWrapper = document.querySelector('.frame-wrapper');
+      // 중앙 정렬(translate(-50%, -50%)) 상태 유지하면서 scale 적용
+      frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
+    }
+
+    window.addEventListener('load', scaleFrame);
+    window.addEventListener('resize', scaleFrame);
+
+    // 이하 기존 로직(이름/성별/나이/약관 단계 이동) 그대로 유지
+    var currentStep = 1; // 1: 이름 입력, 2: 성별 선택, 3: 나이 선택, 4: 정보 확인
     var selectedGender = "";
     var selectedAge = "";
     var termsAgreed = false;
-
     const childNameInput = document.getElementById("childName");
     const stepContainer = document.getElementById("stepContainer");
     const page2Header = document.getElementById("page2Header");
@@ -283,7 +237,6 @@
     childNameInput.addEventListener("input", validateName);
     validateName();
 
-    // 약관 동의 체크박스 상태
     function updateTicketButtonState() {
       if (currentStep === 4) {
         if (termsAgreed) {
@@ -298,191 +251,223 @@
 
     function nextStep() {
       if (currentStep === 1) {
-        // 이름 입력
         if (childNameInput.value.trim() === "") return;
+        // Step 1 -> Step 2
+        page2Header.classList.add("header-slide-out");
+        setTimeout(() => {
+          page2Header.innerHTML = "아이 성별은 무엇인가요?";
+          page2Header.classList.remove("header-slide-out");
+          page2Header.classList.add("header-slide-in");
+          nextBtnText.textContent = "다음";
+          const nameInput = stepContainer.querySelector(".name-input");
+          nameInput.classList.add("slide-down");
 
-        // UI 변경(성별)
-        page2Header.innerHTML = "아이 성별은 무엇인가요?";
-        nextBtnText.textContent = "다음";
+          setTimeout(() => {
+            stepContainer.innerHTML = "";
+            var genderContainer = document.createElement("div");
+            genderContainer.className = "gender-container";
+            var maleBtn = document.createElement("button");
+            maleBtn.textContent = "남성";
+            maleBtn.className = "gender-btn";
+            var femaleBtn = document.createElement("button");
+            femaleBtn.textContent = "여성";
+            femaleBtn.className = "gender-btn";
 
-        stepContainer.innerHTML = "";
+            maleBtn.addEventListener("click", function() {
+              maleBtn.classList.add("active");
+              femaleBtn.classList.remove("active");
+              selectedGender = "남성";
+            });
+            femaleBtn.addEventListener("click", function() {
+              femaleBtn.classList.add("active");
+              maleBtn.classList.remove("active");
+              selectedGender = "여성";
+            });
 
-        var genderContainer = document.createElement("div");
-        genderContainer.className = "gender-container";
-        var maleBtn = document.createElement("button");
-        maleBtn.textContent = "남성";
-        maleBtn.className = "gender-btn";
-        var femaleBtn = document.createElement("button");
-        femaleBtn.textContent = "여성";
-        femaleBtn.className = "gender-btn";
+            genderContainer.appendChild(maleBtn);
+            genderContainer.appendChild(femaleBtn);
+            stepContainer.appendChild(genderContainer);
 
-        maleBtn.addEventListener("click", function() {
-          maleBtn.classList.add("active");
-          femaleBtn.classList.remove("active");
-          selectedGender = "남성";
-        });
-        femaleBtn.addEventListener("click", function() {
-          femaleBtn.classList.add("active");
-          maleBtn.classList.remove("active");
-          selectedGender = "여성";
-        });
+            var nameLabel = document.createElement("div");
+            nameLabel.textContent = "아이 이름";
+            nameLabel.className = "name-label";
+            stepContainer.appendChild(nameLabel);
 
-        genderContainer.appendChild(maleBtn);
-        genderContainer.appendChild(femaleBtn);
-        stepContainer.appendChild(genderContainer);
-
-        var nameLabel = document.createElement("div");
-        nameLabel.textContent = "아이 이름";
-        nameLabel.className = "name-label";
-        stepContainer.appendChild(nameLabel);
-
-        var nameInput = document.createElement("input");
-        nameInput.type = "text";
-        nameInput.value = childNameInput.value;
-        nameInput.className = "name-input";
-        nameInput.readOnly = true;
-        stepContainer.appendChild(nameInput);
-
-        currentStep = 2;
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = childNameInput.value;
+            nameInput.className = "name-input";
+            nameInput.readOnly = true;
+            stepContainer.appendChild(nameInput);
+            currentStep = 2;
+          }, 500);
+        }, 300);
       } else if (currentStep === 2) {
-        // 성별
-        if (!selectedGender) {
+        if (selectedGender === "") {
           alert("성별을 선택해주세요!");
           return;
         }
-        page2Header.innerHTML = "거의다 왔어요!<br/>보호자분의 나이대가 어떻게 되나요?";
-        nextBtnText.textContent = "확인";
+        // Step 2 -> Step 3
+        page2Header.classList.add("header-slide-out");
+        setTimeout(() => {
+          page2Header.innerHTML = "거의다 왔어요!<br/>보호자분의 나이대가 어떻게 되나요?";
+          page2Header.classList.remove("header-slide-out");
+          page2Header.classList.add("header-slide-in");
+          nextBtnText.textContent = "확인";
 
-        stepContainer.innerHTML = "";
+          const genderContainer = stepContainer.querySelector(".gender-container");
+          const nameLabel = stepContainer.querySelector(".name-label");
+          const nameInput = stepContainer.querySelector(".name-input");
+          genderContainer.classList.add("slide-down");
+          nameLabel.classList.add("slide-down");
+          nameInput.classList.add("slide-down");
 
-        var ageContainer = document.createElement("div");
-        ageContainer.className = "age-container";
-        const ageOptions = ["10대", "20대", "30대", "40대", "50대~"];
-        const buttons = [];
+          setTimeout(() => {
+            stepContainer.innerHTML = "";
+            var ageContainer = document.createElement("div");
+            ageContainer.className = "age-container";
+            const ageOptions = ["10대", "20대", "30대", "40대", "50대~"];
+            const buttons = [];
 
-        ageOptions.forEach(age => {
-          var btn = document.createElement("button");
-          btn.textContent = age;
-          btn.className = "age-btn";
-          btn.addEventListener("click", function() {
-            buttons.forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            selectedAge = age;
-          });
-          buttons.push(btn);
-          ageContainer.appendChild(btn);
-        });
-        stepContainer.appendChild(ageContainer);
+            ageOptions.forEach(age => {
+              var btn = document.createElement("button");
+              btn.textContent = age;
+              btn.className = "age-btn";
+              btn.addEventListener("click", function() {
+                buttons.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                selectedAge = age;
+              });
+              buttons.push(btn);
+              ageContainer.appendChild(btn);
+            });
+            stepContainer.appendChild(ageContainer);
 
-        var genderLabel = document.createElement("div");
-        genderLabel.textContent = "성별";
-        genderLabel.className = "gender-label";
-        stepContainer.appendChild(genderLabel);
+            var genderLabel = document.createElement("div");
+            genderLabel.textContent = "성별";
+            genderLabel.className = "gender-label";
+            stepContainer.appendChild(genderLabel);
 
-        var genderInput = document.createElement("input");
-        genderInput.type = "text";
-        genderInput.value = selectedGender;
-        genderInput.className = "gender-input";
-        genderInput.readOnly = true;
-        stepContainer.appendChild(genderInput);
+            var genderInput = document.createElement("input");
+            genderInput.type = "text";
+            genderInput.value = selectedGender;
+            genderInput.className = "gender-input";
+            genderInput.readOnly = true;
+            stepContainer.appendChild(genderInput);
 
-        var nameLabel = document.createElement("div");
-        nameLabel.textContent = "아이 이름";
-        nameLabel.className = "name-label";
-        stepContainer.appendChild(nameLabel);
+            var nameLabel = document.createElement("div");
+            nameLabel.textContent = "아이 이름";
+            nameLabel.className = "name-label";
+            stepContainer.appendChild(nameLabel);
 
-        var nameInput = document.createElement("input");
-        nameInput.type = "text";
-        nameInput.value = childNameInput.value;
-        nameInput.className = "name-input";
-        nameInput.readOnly = true;
-        stepContainer.appendChild(nameInput);
-
-        currentStep = 3;
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = childNameInput.value;
+            nameInput.className = "name-input";
+            nameInput.readOnly = true;
+            stepContainer.appendChild(nameInput);
+            currentStep = 3;
+          }, 500);
+        }, 300);
       } else if (currentStep === 3) {
-        // 나이
-        if (!selectedAge) {
+        if (selectedAge === "") {
           alert("나이를 선택해주세요!");
           return;
         }
-        page2Header.innerHTML = "입력하신 정보가 맞나요?<br/>이제 티켓을 발권하러 같이 가요!";
-        nextBtnText.textContent = "티켓 만들기";
+        // Step 3 -> Step 4
+        page2Header.classList.add("header-slide-out");
+        setTimeout(() => {
+          page2Header.innerHTML = "입력하신 정보가 맞나요?<br/>이제 티켓을 발권하러 같이 가요!";
+          page2Header.classList.remove("header-slide-out");
+          page2Header.classList.add("header-slide-in");
+          nextBtnText.textContent = "티켓 만들기";
 
-        stepContainer.innerHTML = "";
+          const ageContainer = stepContainer.querySelector(".age-container");
+          const genderLabel = stepContainer.querySelector(".gender-label");
+          const genderInput = stepContainer.querySelector(".gender-input");
+          const nameLabel = stepContainer.querySelector(".name-label");
+          const nameInput = stepContainer.querySelector(".name-input");
+          ageContainer.classList.add("slide-down");
+          genderLabel.classList.add("slide-down");
+          genderInput.classList.add("slide-down");
+          nameLabel.classList.add("slide-down");
+          nameInput.classList.add("slide-down");
 
-        var nameLabel = document.createElement("div");
-        nameLabel.textContent = "아이 이름";
-        nameLabel.className = "name-label";
-        stepContainer.appendChild(nameLabel);
+          setTimeout(() => {
+            stepContainer.innerHTML = "";
+            var nameLabel = document.createElement("div");
+            nameLabel.textContent = "아이 이름";
+            nameLabel.className = "name-label";
+            stepContainer.appendChild(nameLabel);
 
-        var nameInput = document.createElement("input");
-        nameInput.type = "text";
-        nameInput.value = childNameInput.value;
-        nameInput.className = "name-input";
-        nameInput.readOnly = true;
-        stepContainer.appendChild(nameInput);
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = childNameInput.value;
+            nameInput.className = "name-input";
+            nameInput.readOnly = true;
+            stepContainer.appendChild(nameInput);
 
-        var genderLabel = document.createElement("div");
-        genderLabel.textContent = "성별";
-        genderLabel.className = "gender-label";
-        stepContainer.appendChild(genderLabel);
+            var genderLabel = document.createElement("div");
+            genderLabel.textContent = "성별";
+            genderLabel.className = "gender-label";
+            stepContainer.appendChild(genderLabel);
 
-        var genderInput = document.createElement("input");
-        genderInput.type = "text";
-        genderInput.value = selectedGender;
-        genderInput.className = "gender-input";
-        genderInput.readOnly = true;
-        stepContainer.appendChild(genderInput);
+            var genderInput = document.createElement("input");
+            genderInput.type = "text";
+            genderInput.value = selectedGender;
+            genderInput.className = "gender-input";
+            genderInput.readOnly = true;
+            stepContainer.appendChild(genderInput);
 
-        var ageLabel = document.createElement("div");
-        ageLabel.textContent = "나이대";
-        ageLabel.className = "age-label";
-        stepContainer.appendChild(ageLabel);
+            var ageLabel = document.createElement("div");
+            ageLabel.textContent = "나이대";
+            ageLabel.className = "age-label";
+            stepContainer.appendChild(ageLabel);
 
-        var ageInput = document.createElement("input");
-        ageInput.type = "text";
-        ageInput.value = selectedAge;
-        ageInput.className = "age-input";
-        ageInput.readOnly = true;
-        stepContainer.appendChild(ageInput);
+            var ageInput = document.createElement("input");
+            ageInput.type = "text";
+            ageInput.value = selectedAge;
+            ageInput.className = "age-input";
+            ageInput.readOnly = true;
+            stepContainer.appendChild(ageInput);
 
-        // 약관
-        var termsContainer = document.createElement("div");
-        termsContainer.className = "terms-container";
+            var termsContainer = document.createElement("div");
+            termsContainer.className = "terms-container";
 
-        var checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = "termsCheckbox";
-        checkbox.className = "terms-checkbox";
-        checkbox.addEventListener("change", function() {
-          termsAgreed = checkbox.checked;
-          updateTicketButtonState();
-        });
-        termsContainer.appendChild(checkbox);
+            var checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = "termsCheckbox";
+            checkbox.className = "terms-checkbox";
+            checkbox.addEventListener("change", function() {
+              termsAgreed = checkbox.checked;
+              updateTicketButtonState();
+            });
+            termsContainer.appendChild(checkbox);
 
-        var termsText = document.createElement("div");
-        termsText.className = "terms-text";
-        termsText.innerHTML = `
-[마케팅 정보 수집 및 개인정보 이용 동의]<br/>
-귀하의 개인정보는 서비스 제공 및 마케팅 목적으로 수집됩니다.<br/>
-- 수집 항목: 이름, 성별, 나이대<br/>
-- 이용 목적: 맞춤형 서비스 제공, 이벤트 및 프로모션 안내<br/>
-- 보유 기간: 동의 철회 시까지<br/>
-동의를 거부할 권리가 있으며, 거부 시 일부 서비스 이용이 제한될 수 있습니다.
-        `;
-        termsContainer.appendChild(termsText);
+            var termsText = document.createElement("div");
+            termsText.className = "terms-text";
+            termsText.innerHTML = `
+              [마케팅 정보 수집 및 개인정보 이용 동의]<br/>
+              귀하의 개인정보는 서비스 제공 및 마케팅 목적으로 수집됩니다.<br/>
+              - 수집 항목: 이름, 성별, 나이대<br/>
+              - 이용 목적: 맞춤형 서비스 제공, 이벤트 및 프로모션 안내<br/>
+              - 보유 기간: 동의 철회 시까지<br/>
+              동의를 거부할 권리가 있으며, 거부 시 일부 서비스 이용이 제한될 수 있습니다.
+            `;
+            termsContainer.appendChild(termsText);
+            stepContainer.appendChild(termsContainer);
 
-        stepContainer.appendChild(termsContainer);
-
-        currentStep = 4;
-        termsAgreed = false;
-        updateTicketButtonState();
+            currentStep = 4;
+            termsAgreed = false;
+            updateTicketButtonState();
+          }, 500);
+        }, 300);
       } else if (currentStep === 4) {
-        // 최종
         if (!termsAgreed) {
           alert("약관에 동의해주세요!");
           return;
         }
+        // Page 3로 이동
         const urlParams = new URLSearchParams({
           childName: childNameInput.value,
           gender: selectedGender,
@@ -494,119 +479,174 @@
 
     function prevStep() {
       if (currentStep === 4) {
-        page2Header.innerHTML = "거의다 왔어요!<br/>보호자분의 나이대가 어떻게 되나요?";
-        nextBtnText.textContent = "확인";
+        // Step 4 -> Step 3
+        page2Header.classList.add("header-slide-out");
+        setTimeout(() => {
+          page2Header.innerHTML = "거의다 왔어요!<br/>보호자분의 나이대가 어떻게 되나요?";
+          page2Header.classList.remove("header-slide-out");
+          page2Header.classList.add("header-slide-in");
+          nextBtnText.textContent = "확인";
 
-        stepContainer.innerHTML = "";
+          const nameLabel = stepContainer.querySelectorAll(".name-label")[0];
+          const nameInput = stepContainer.querySelectorAll(".name-input")[0];
+          const genderLabel = stepContainer.querySelector(".gender-label");
+          const genderInput = stepContainer.querySelector(".gender-input");
+          const ageLabel = stepContainer.querySelector(".age-label");
+          const ageInput = stepContainer.querySelector(".age-input");
+          const termsContainer = stepContainer.querySelector(".terms-container");
+          nameLabel.classList.add("slide-down");
+          nameInput.classList.add("slide-down");
+          genderLabel.classList.add("slide-down");
+          genderInput.classList.add("slide-down");
+          ageLabel.classList.add("slide-down");
+          ageInput.classList.add("slide-down");
+          termsContainer.classList.add("slide-down");
 
-        var ageContainer = document.createElement("div");
-        ageContainer.className = "age-container";
-        const ageOptions = ["10대", "20대", "30대", "40대", "50대~"];
-        const buttons = [];
-        ageOptions.forEach(age => {
-          var btn = document.createElement("button");
-          btn.textContent = age;
-          btn.className = "age-btn";
-          btn.addEventListener("click", function() {
-            buttons.forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            selectedAge = age;
-          });
-          if (selectedAge === age) btn.classList.add("active");
-          buttons.push(btn);
-          ageContainer.appendChild(btn);
-        });
-        stepContainer.appendChild(ageContainer);
+          setTimeout(() => {
+            stepContainer.innerHTML = "";
+            var ageContainer = document.createElement("div");
+            ageContainer.className = "age-container";
+            const ageOptions = ["10대", "20대", "30대", "40대", "50대~"];
+            const buttons = [];
 
-        var genderLabel = document.createElement("div");
-        genderLabel.textContent = "성별";
-        genderLabel.className = "gender-label";
-        stepContainer.appendChild(genderLabel);
+            ageOptions.forEach(age => {
+              var btn = document.createElement("button");
+              btn.textContent = age;
+              btn.className = "age-btn";
+              btn.addEventListener("click", function() {
+                buttons.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                selectedAge = age;
+              });
+              if (selectedAge === age) btn.classList.add("active");
+              buttons.push(btn);
+              ageContainer.appendChild(btn);
+            });
+            stepContainer.appendChild(ageContainer);
 
-        var genderInput = document.createElement("input");
-        genderInput.type = "text";
-        genderInput.value = selectedGender;
-        genderInput.className = "gender-input";
-        genderInput.readOnly = true;
-        stepContainer.appendChild(genderInput);
+            var genderLabel = document.createElement("div");
+            genderLabel.textContent = "성별";
+            genderLabel.className = "gender-label";
+            stepContainer.appendChild(genderLabel);
 
-        var nameLabel = document.createElement("div");
-        nameLabel.textContent = "아이 이름";
-        nameLabel.className = "name-label";
-        stepContainer.appendChild(nameLabel);
+            var genderInput = document.createElement("input");
+            genderInput.type = "text";
+            genderInput.value = selectedGender;
+            genderInput.className = "gender-input";
+            genderInput.readOnly = true;
+            stepContainer.appendChild(genderInput);
 
-        var nameInput = document.createElement("input");
-        nameInput.type = "text";
-        nameInput.value = childNameInput.value;
-        nameInput.className = "name-input";
-        nameInput.readOnly = true;
-        stepContainer.appendChild(nameInput);
+            var nameLabel = document.createElement("div");
+            nameLabel.textContent = "아이 이름";
+            nameLabel.className = "name-label";
+            stepContainer.appendChild(nameLabel);
 
-        currentStep = 3;
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = childNameInput.value;
+            nameInput.className = "name-input";
+            nameInput.readOnly = true;
+            stepContainer.appendChild(nameInput);
+            currentStep = 3;
+          }, 500);
+        }, 300);
       } else if (currentStep === 3) {
-        page2Header.innerHTML = "아이 성별은 무엇인가요?";
-        nextBtnText.textContent = "다음";
+        // Step 3 -> Step 2
+        page2Header.classList.add("header-slide-out");
+        setTimeout(() => {
+          page2Header.innerHTML = "아이 성별은 무엇인가요?";
+          page2Header.classList.remove("header-slide-out");
+          page2Header.classList.add("header-slide-in");
+          nextBtnText.textContent = "다음";
 
-        stepContainer.innerHTML = "";
+          const ageContainer = stepContainer.querySelector(".age-container");
+          const genderLabel = stepContainer.querySelector(".gender-label");
+          const genderInput = stepContainer.querySelector(".gender-input");
+          const nameLabel = stepContainer.querySelector(".name-label");
+          const nameInput = stepContainer.querySelector(".name-input");
+          ageContainer.classList.add("slide-down");
+          genderLabel.classList.add("slide-down");
+          genderInput.classList.add("slide-down");
+          nameLabel.classList.add("slide-down");
+          nameInput.classList.add("slide-down");
 
-        var genderContainer = document.createElement("div");
-        genderContainer.className = "gender-container";
-        var maleBtn = document.createElement("button");
-        maleBtn.textContent = "남성";
-        maleBtn.className = "gender-btn";
-        var femaleBtn = document.createElement("button");
-        femaleBtn.textContent = "여성";
-        femaleBtn.className = "gender-btn";
+          setTimeout(() => {
+            stepContainer.innerHTML = "";
+            var genderContainer = document.createElement("div");
+            genderContainer.className = "gender-container";
+            var maleBtn = document.createElement("button");
+            maleBtn.textContent = "남성";
+            maleBtn.className = "gender-btn";
+            var femaleBtn = document.createElement("button");
+            femaleBtn.textContent = "여성";
+            femaleBtn.className = "gender-btn";
 
-        maleBtn.addEventListener("click", function() {
-          maleBtn.classList.add("active");
-          femaleBtn.classList.remove("active");
-          selectedGender = "남성";
-        });
-        femaleBtn.addEventListener("click", function() {
-          femaleBtn.classList.add("active");
-          maleBtn.classList.remove("active");
-          selectedGender = "여성";
-        });
+            maleBtn.addEventListener("click", function() {
+              maleBtn.classList.add("active");
+              femaleBtn.classList.remove("active");
+              selectedGender = "남성";
+            });
+            femaleBtn.addEventListener("click", function() {
+              femaleBtn.classList.add("active");
+              maleBtn.classList.remove("active");
+              selectedGender = "여성";
+            });
+            if (selectedGender === "남성") maleBtn.classList.add("active");
+            if (selectedGender === "여성") femaleBtn.classList.add("active");
 
-        if (selectedGender === "남성") maleBtn.classList.add("active");
-        if (selectedGender === "여성") femaleBtn.classList.add("active");
+            genderContainer.appendChild(maleBtn);
+            genderContainer.appendChild(femaleBtn);
+            stepContainer.appendChild(genderContainer);
 
-        genderContainer.appendChild(maleBtn);
-        genderContainer.appendChild(femaleBtn);
-        stepContainer.appendChild(genderContainer);
+            var nameLabel = document.createElement("div");
+            nameLabel.textContent = "아이 이름";
+            nameLabel.className = "name-label";
+            stepContainer.appendChild(nameLabel);
 
-        var nameLabel = document.createElement("div");
-        nameLabel.textContent = "아이 이름";
-        nameLabel.className = "name-label";
-        stepContainer.appendChild(nameLabel);
-
-        var nameInput = document.createElement("input");
-        nameInput.type = "text";
-        nameInput.value = childNameInput.value;
-        nameInput.className = "name-input";
-        nameInput.readOnly = true;
-        stepContainer.appendChild(nameInput);
-
-        currentStep = 2;
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = childNameInput.value;
+            nameInput.className = "name-input";
+            nameInput.readOnly = true;
+            stepContainer.appendChild(nameInput);
+            currentStep = 2;
+            selectedAge = "";
+          }, 500);
+        }, 300);
       } else if (currentStep === 2) {
-        page2Header.innerHTML = "반가워요!<br/>아이의 이름이 무엇인가요?";
-        nextBtnText.textContent = "다음";
+        // Step 2 -> Step 1
+        page2Header.classList.add("header-slide-out");
+        setTimeout(() => {
+          page2Header.innerHTML = "반가워요!<br/>아이의 이름이 무엇인가요?";
+          page2Header.classList.remove("header-slide-out");
+          page2Header.classList.add("header-slide-in");
+          nextBtnText.textContent = "다음";
 
-        stepContainer.innerHTML = "";
-        var input = document.createElement("input");
-        input.type = "text";
-        input.id = "childName";
-        input.placeholder = "살콩이";
-        input.className = "name-input";
-        input.value = childNameInput.value;
-        stepContainer.appendChild(input);
+          const genderContainer = stepContainer.querySelector(".gender-container");
+          const nameLabel = stepContainer.querySelector(".name-label");
+          const nameInput = stepContainer.querySelector(".name-input");
+          genderContainer.classList.add("slide-down");
+          nameLabel.classList.add("slide-down");
+          nameInput.classList.add("slide-down");
 
-        input.addEventListener("input", validateName);
-        validateName();
-        currentStep = 1;
-        selectedGender = "";
+          setTimeout(() => {
+            stepContainer.innerHTML = "";
+            var input = document.createElement("input");
+            input.type = "text";
+            input.id = "childName";
+            input.placeholder = "살콩이";
+            input.className = "name-input";
+            input.value = childNameInput.value;
+            stepContainer.appendChild(input);
+
+            input.addEventListener("input", validateName);
+            validateName();
+            currentStep = 1;
+            selectedGender = "";
+          }, 500);
+        }, 300);
       } else {
+        // 처음 페이지(index.html)로 이동
         window.location.href = "index.html";
       }
     }
