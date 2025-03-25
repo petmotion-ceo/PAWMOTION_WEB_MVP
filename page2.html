@@ -5,7 +5,7 @@
   <!-- 모바일 디바이스에서 초기 스케일 고정 -->
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Mobile Layout - Fullscreen</title>
+  <title>Mobile Layout - Fixed Ratio</title>
   <style>
     /* Pretendard Light (300) */
     @font-face {
@@ -29,27 +29,31 @@
       font-style: normal;
     }
 
-    /* 페이지 전체 스타일 */
+    /* 페이지 전체 스타일 - 배경 흰색, 스크롤 가능(남는 여백도 흰색으로) */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden; /* 스크롤 제거 */
-      background: #FFFFFF;
+      background: #FFFFFF; /* 남는 여백은 흰 배경 */
+      /* overflow: hidden;  <= 제거 */
     }
 
-    /* 402x874 고정이 아니라, 기기 전체 화면을 차지하도록 100vw x 100vh */
+    /* 실제 디자인 크기(402x874)를 갖는 프레임을 절대 배치, box-shadow 제거 */
     .frame-wrapper {
-      width: 100vw;
-      height: 100vh;
-      position: relative; /* 내부 요소 배치용 */
-      overflow: hidden;   /* 스크롤 숨김 */
+      width: 402px;
+      height: 874px;
+      position: absolute;
+      top: 50%;       /* 화면 중앙 정렬 */
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1); /* scale(1)은 초기값 */
+      transform-origin: center center;  /* 스케일 기준점 */
       background: #FFFFFF;
-      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+      /* box-shadow: 0 0 8px rgba(0,0,0,0.2);  <= 제거 */
+      overflow: hidden;
     }
 
-    /* 기존 버튼/입력창 스타일 */
+    /* 버튼, 입력창 스타일 */
     .gender-btn {
       flex: 1;
       margin: 0 5px;
@@ -161,36 +165,26 @@
   </style>
 </head>
 <body>
-  <!-- .frame-wrapper: 100vw x 100vh -->
+  <!-- 프레임 래퍼 -->
   <div class="frame-wrapper" id="page2">
-    <!-- 내부는 기존처럼 절대 배치(px) -->
-    <div style="width:402px; height:874px; position:absolute; top:0; left:0;">
-      <!-- Header 영역 -->
+    <div style="width:402px; height:874px; position:relative;">
       <div style="position:absolute; top:54px; left:0; width:402px; height:48px; background:white;"></div>
+      <!-- Header -->
       <div id="page2Header">
         반가워요!<br/>아이의 이름이 무엇인가요?
       </div>
-
-      <!-- 이전 버튼 -->
+      <!-- Previous button -->
       <div id="prevBtn"
-           style="position:absolute; left:17px; top:795px; width:82px; height:35px; padding:1px 46px;
-                  background:white; border-radius:8px; border:0.5px solid black;
-                  display:flex; justify-content:center; align-items:center; cursor:pointer;"
+           style="position:absolute; left:17px; top:795px; width:82px; height:35px; padding:1px 46px; background:white; border-radius:8px; border:0.5px solid black; display:flex; justify-content:center; align-items:center; cursor:pointer;"
            onclick="prevStep()">
         <div style="color:black; font-size:16px; font-family:Pretendard; font-weight:500;">이전</div>
       </div>
-
-      <!-- 다음 버튼 -->
+      <!-- Next button (티켓 만들기 버튼으로 사용) -->
       <div id="nextBtn"
-           style="position:absolute; left:209px; top:795px; width:82px; height:35px; padding:1px 46px;
-                  background:#208FFF; border-radius:8px; display:flex;
-                  justify-content:center; align-items:center; cursor:pointer;"
+           style="position:absolute; left:209px; top:795px; width:82px; height:35px; padding:1px 46px; background:#208FFF; border-radius:8px; display:flex; justify-content:center; align-items:center; cursor:pointer;"
            onclick="nextStep()">
-        <div style="color:white; font-size:16px; font-family:Pretendard; font-weight:500;" id="nextBtnText">
-          다음
-        </div>
+        <div style="color:white; font-size:16px; font-family:Pretendard; font-weight:500;" id="nextBtnText">다음</div>
       </div>
-
       <!-- Step Container -->
       <div id="stepContainer" style="position:absolute; left:16px; top:193px; width:370px;">
         <!-- Step 1: 이름 입력 -->
@@ -203,16 +197,25 @@
   </div>
 
   <script>
-    // ratio(402x874)는 무시.
-    // 지금은 frame-wrapper가 화면 전체(100vw x 100vh)를 차지하고,
-    // 내부에 절대 배치된 402x874 영역이 그대로 표시됩니다.
-    // (비율 강제 없음, 스크롤 없음, 무조건 화면을 채움)
+    // 화면 크기에 맞춰 .frame-wrapper를 자동으로 scale 해주는 함수
+    function scaleFrame() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      // 402 x 874 비율 기준으로 최소값으로 스케일 결정
+      var scaleValue = Math.min(w / 402, h / 874);
+      var frameWrapper = document.querySelector('.frame-wrapper');
+      // 중앙 정렬(translate(-50%, -50%)) 상태 유지하면서 scale 적용
+      frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
+    }
 
-    var currentStep = 1;
+    window.addEventListener('load', scaleFrame);
+    window.addEventListener('resize', scaleFrame);
+
+    // 이하 기존 로직(이름/성별/나이/약관 단계 이동) 그대로 유지
+    var currentStep = 1; // 1: 이름 입력, 2: 성별 선택, 3: 나이 선택, 4: 정보 확인
     var selectedGender = "";
     var selectedAge = "";
     var termsAgreed = false;
-
     const childNameInput = document.getElementById("childName");
     const stepContainer = document.getElementById("stepContainer");
     const page2Header = document.getElementById("page2Header");
@@ -249,6 +252,7 @@
     function nextStep() {
       if (currentStep === 1) {
         if (childNameInput.value.trim() === "") return;
+        // Step 1 -> Step 2
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "아이 성별은 무엇인가요?";
@@ -262,7 +266,6 @@
             stepContainer.innerHTML = "";
             var genderContainer = document.createElement("div");
             genderContainer.className = "gender-container";
-
             var maleBtn = document.createElement("button");
             maleBtn.textContent = "남성";
             maleBtn.className = "gender-btn";
@@ -290,21 +293,21 @@
             nameLabel.className = "name-label";
             stepContainer.appendChild(nameLabel);
 
-            var readonlyName = document.createElement("input");
-            readonlyName.type = "text";
-            readonlyName.value = childNameInput.value;
-            readonlyName.className = "name-input";
-            readonlyName.readOnly = true;
-            stepContainer.appendChild(readonlyName);
-
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = childNameInput.value;
+            nameInput.className = "name-input";
+            nameInput.readOnly = true;
+            stepContainer.appendChild(nameInput);
             currentStep = 2;
           }, 500);
         }, 300);
       } else if (currentStep === 2) {
-        if (!selectedGender) {
+        if (selectedGender === "") {
           alert("성별을 선택해주세요!");
           return;
         }
+        // Step 2 -> Step 3
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "거의다 왔어요!<br/>보호자분의 나이대가 어떻게 되나요?";
@@ -352,26 +355,26 @@
             genderInput.readOnly = true;
             stepContainer.appendChild(genderInput);
 
-            var nameLabel2 = document.createElement("div");
-            nameLabel2.textContent = "아이 이름";
-            nameLabel2.className = "name-label";
-            stepContainer.appendChild(nameLabel2);
+            var nameLabel = document.createElement("div");
+            nameLabel.textContent = "아이 이름";
+            nameLabel.className = "name-label";
+            stepContainer.appendChild(nameLabel);
 
-            var nameInput2 = document.createElement("input");
-            nameInput2.type = "text";
-            nameInput2.value = childNameInput.value;
-            nameInput2.className = "name-input";
-            nameInput2.readOnly = true;
-            stepContainer.appendChild(nameInput2);
-
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = childNameInput.value;
+            nameInput.className = "name-input";
+            nameInput.readOnly = true;
+            stepContainer.appendChild(nameInput);
             currentStep = 3;
           }, 500);
         }, 300);
       } else if (currentStep === 3) {
-        if (!selectedAge) {
+        if (selectedAge === "") {
           alert("나이를 선택해주세요!");
           return;
         }
+        // Step 3 -> Step 4
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "입력하신 정보가 맞나요?<br/>이제 티켓을 발권하러 같이 가요!";
@@ -392,41 +395,41 @@
 
           setTimeout(() => {
             stepContainer.innerHTML = "";
-            var nameLabel3 = document.createElement("div");
-            nameLabel3.textContent = "아이 이름";
-            nameLabel3.className = "name-label";
-            stepContainer.appendChild(nameLabel3);
+            var nameLabel = document.createElement("div");
+            nameLabel.textContent = "아이 이름";
+            nameLabel.className = "name-label";
+            stepContainer.appendChild(nameLabel);
 
-            var nameInput3 = document.createElement("input");
-            nameInput3.type = "text";
-            nameInput3.value = childNameInput.value;
-            nameInput3.className = "name-input";
-            nameInput3.readOnly = true;
-            stepContainer.appendChild(nameInput3);
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = childNameInput.value;
+            nameInput.className = "name-input";
+            nameInput.readOnly = true;
+            stepContainer.appendChild(nameInput);
 
-            var genderLabel2 = document.createElement("div");
-            genderLabel2.textContent = "성별";
-            genderLabel2.className = "gender-label";
-            stepContainer.appendChild(genderLabel2);
+            var genderLabel = document.createElement("div");
+            genderLabel.textContent = "성별";
+            genderLabel.className = "gender-label";
+            stepContainer.appendChild(genderLabel);
 
-            var genderInput2 = document.createElement("input");
-            genderInput2.type = "text";
-            genderInput2.value = selectedGender;
-            genderInput2.className = "gender-input";
-            genderInput2.readOnly = true;
-            stepContainer.appendChild(genderInput2);
+            var genderInput = document.createElement("input");
+            genderInput.type = "text";
+            genderInput.value = selectedGender;
+            genderInput.className = "gender-input";
+            genderInput.readOnly = true;
+            stepContainer.appendChild(genderInput);
 
-            var ageLabel2 = document.createElement("div");
-            ageLabel2.textContent = "나이대";
-            ageLabel2.className = "age-label";
-            stepContainer.appendChild(ageLabel2);
+            var ageLabel = document.createElement("div");
+            ageLabel.textContent = "나이대";
+            ageLabel.className = "age-label";
+            stepContainer.appendChild(ageLabel);
 
-            var ageInput2 = document.createElement("input");
-            ageInput2.type = "text";
-            ageInput2.value = selectedAge;
-            ageInput2.className = "age-input";
-            ageInput2.readOnly = true;
-            stepContainer.appendChild(ageInput2);
+            var ageInput = document.createElement("input");
+            ageInput.type = "text";
+            ageInput.value = selectedAge;
+            ageInput.className = "age-input";
+            ageInput.readOnly = true;
+            stepContainer.appendChild(ageInput);
 
             var termsContainer = document.createElement("div");
             termsContainer.className = "terms-container";
@@ -464,6 +467,7 @@
           alert("약관에 동의해주세요!");
           return;
         }
+        // Page 3로 이동
         const urlParams = new URLSearchParams({
           childName: childNameInput.value,
           gender: selectedGender,
@@ -475,6 +479,7 @@
 
     function prevStep() {
       if (currentStep === 4) {
+        // Step 4 -> Step 3
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "거의다 왔어요!<br/>보호자분의 나이대가 어떻게 되나요?";
@@ -489,7 +494,6 @@
           const ageLabel = stepContainer.querySelector(".age-label");
           const ageInput = stepContainer.querySelector(".age-input");
           const termsContainer = stepContainer.querySelector(".terms-container");
-
           nameLabel.classList.add("slide-down");
           nameInput.classList.add("slide-down");
           genderLabel.classList.add("slide-down");
@@ -520,34 +524,34 @@
             });
             stepContainer.appendChild(ageContainer);
 
-            var genderLabel2 = document.createElement("div");
-            genderLabel2.textContent = "성별";
-            genderLabel2.className = "gender-label";
-            stepContainer.appendChild(genderLabel2);
+            var genderLabel = document.createElement("div");
+            genderLabel.textContent = "성별";
+            genderLabel.className = "gender-label";
+            stepContainer.appendChild(genderLabel);
 
-            var genderInput2 = document.createElement("input");
-            genderInput2.type = "text";
-            genderInput2.value = selectedGender;
-            genderInput2.className = "gender-input";
-            genderInput2.readOnly = true;
-            stepContainer.appendChild(genderInput2);
+            var genderInput = document.createElement("input");
+            genderInput.type = "text";
+            genderInput.value = selectedGender;
+            genderInput.className = "gender-input";
+            genderInput.readOnly = true;
+            stepContainer.appendChild(genderInput);
 
-            var nameLabel2 = document.createElement("div");
-            nameLabel2.textContent = "아이 이름";
-            nameLabel2.className = "name-label";
-            stepContainer.appendChild(nameLabel2);
+            var nameLabel = document.createElement("div");
+            nameLabel.textContent = "아이 이름";
+            nameLabel.className = "name-label";
+            stepContainer.appendChild(nameLabel);
 
-            var nameInput2 = document.createElement("input");
-            nameInput2.type = "text";
-            nameInput2.value = childNameInput.value;
-            nameInput2.className = "name-input";
-            nameInput2.readOnly = true;
-            stepContainer.appendChild(nameInput2);
-
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = childNameInput.value;
+            nameInput.className = "name-input";
+            nameInput.readOnly = true;
+            stepContainer.appendChild(nameInput);
             currentStep = 3;
           }, 500);
         }, 300);
       } else if (currentStep === 3) {
+        // Step 3 -> Step 2
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "아이 성별은 무엇인가요?";
@@ -560,7 +564,6 @@
           const genderInput = stepContainer.querySelector(".gender-input");
           const nameLabel = stepContainer.querySelector(".name-label");
           const nameInput = stepContainer.querySelector(".name-input");
-
           ageContainer.classList.add("slide-down");
           genderLabel.classList.add("slide-down");
           genderInput.classList.add("slide-down");
@@ -571,7 +574,6 @@
             stepContainer.innerHTML = "";
             var genderContainer = document.createElement("div");
             genderContainer.className = "gender-container";
-
             var maleBtn = document.createElement("button");
             maleBtn.textContent = "남성";
             maleBtn.className = "gender-btn";
@@ -596,23 +598,23 @@
             genderContainer.appendChild(femaleBtn);
             stepContainer.appendChild(genderContainer);
 
-            var nameLabel2 = document.createElement("div");
-            nameLabel2.textContent = "아이 이름";
-            nameLabel2.className = "name-label";
-            stepContainer.appendChild(nameLabel2);
+            var nameLabel = document.createElement("div");
+            nameLabel.textContent = "아이 이름";
+            nameLabel.className = "name-label";
+            stepContainer.appendChild(nameLabel);
 
-            var nameInput2 = document.createElement("input");
-            nameInput2.type = "text";
-            nameInput2.value = childNameInput.value;
-            nameInput2.className = "name-input";
-            nameInput2.readOnly = true;
-            stepContainer.appendChild(nameInput2);
-
+            var nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.value = childNameInput.value;
+            nameInput.className = "name-input";
+            nameInput.readOnly = true;
+            stepContainer.appendChild(nameInput);
             currentStep = 2;
             selectedAge = "";
           }, 500);
         }, 300);
       } else if (currentStep === 2) {
+        // Step 2 -> Step 1
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "반가워요!<br/>아이의 이름이 무엇인가요?";
@@ -623,7 +625,6 @@
           const genderContainer = stepContainer.querySelector(".gender-container");
           const nameLabel = stepContainer.querySelector(".name-label");
           const nameInput = stepContainer.querySelector(".name-input");
-
           genderContainer.classList.add("slide-down");
           nameLabel.classList.add("slide-down");
           nameInput.classList.add("slide-down");
