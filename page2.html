@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <!-- 모바일 디바이스에서 초기 스케일 고정 -->
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mobile Layout - Fixed Ratio</title>
   <style>
     /* Pretendard Light (300) */
@@ -29,20 +28,21 @@
       font-style: normal;
     }
 
-    /* 페이지 전체 스타일 - 배경 흰색 */
+    /* 페이지 전체 스타일 - 배경 흰색 및 스크롤 방지 */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
       background: #FFFFFF;
+      overflow: hidden;
     }
 
     /* 실제 디자인 크기(432x874)를 갖는 프레임, 중앙 배치 유지 */
     .frame-wrapper {
       width: 432px;
       height: 874px;
-      position: absolute;
+      position: fixed; /* 변경: absolute -> fixed */
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(1);
