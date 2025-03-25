@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <!-- 모바일 디바이스에서 초기 스케일 고정 -->
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Mobile Layout - Fixed Ratio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mobile Layout - Auto-Resize</title>
   <style>
     /* Pretendard Light (300) */
     @font-face {
@@ -29,31 +28,48 @@
       font-style: normal;
     }
 
-    /* 페이지 전체 스타일 - 스크롤 없애고 화면에 고정 */
+    /*
+      ------------------------------------------------------------
+      전체 페이지:
+      - 가로를 모바일 화면(100vw)에 꽉 맞추고,
+      - 402:874 비율 유지 (aspect-ratio)
+      - 세로는 필요한 만큼 자동으로 늘어남
+      ------------------------------------------------------------
+    */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden; /* 스크롤 제거 */
-      background: #F0F0F0;
+      background: #FFFFFF;
+      /*
+        스크롤이 필요하면 overflow:auto;
+        스크롤 없이 자르고 싶으면 overflow:hidden;
+      */
+      overflow: auto;
     }
 
-    /* 실제 디자인 크기(402x874)를 갖는 프레임을 절대 배치 */
+    /*
+      frame-wrapper:
+      - 너비 100vw (휴대폰 가로 화면 꽉 채움)
+      - 세로 자동 (aspect-ratio: 402/874)
+      - position/transform 대신 내부 요소 배치는 상대단위(or absolute/relative)로 조정
+      - 아래 예시는 absolute 위치 지정이 px 단위라 비율 확대/축소에는 제한적.
+    */
     .frame-wrapper {
-      width: 402px;
-      height: 874px;
-      position: absolute;
-      top: 50%;       /* 화면 중앙 정렬 */
-      left: 50%;
-      transform: translate(-50%, -50%) scale(1);
-      transform-origin: center center;  /* 스케일 기준점 */
+      /* 가로 = 화면 100%, 세로 = 비율 402 : 874 유지 */
+      width: 100vw;
+      height: auto;
+      aspect-ratio: 402 / 874;  /* CSS3, 현대 브라우저 호환 */
+
+      position: relative;       /* 내부 절대 배치(absolute)를 위해 필요 */
       background: #FFFFFF;
       box-shadow: 0 0 8px rgba(0,0,0,0.2);
       overflow: hidden;
     }
 
-    /* 버튼, 입력창 등 기존 스타일은 그대로 유지 */
+    /* 절대 위치 배치 요소가 비율대로 축소/확대되려면, px 고정 대신 % 등을 활용해야 더 자연스러움. */
+
     .gender-btn {
       flex: 1;
       margin: 0 5px;
@@ -131,20 +147,6 @@
       width: 100%;
       margin-bottom: 20px;
     }
-    #page2Header {
-      position: absolute;
-      top: 77px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      color: black;
-      font-size: 20px;
-      font-family: Pretendard;
-      font-weight: 700;
-      line-height: 32px;
-      width: 100%;
-      max-width: 370px;
-    }
     .terms-container {
       display: flex;
       align-items: center;
@@ -162,24 +164,49 @@
       line-height: 18px;
       text-align: left;
     }
+
+    /* 기존 px 절대 위치는 유지하지만, 스케일은 안 됨.
+       모바일마다 해상도가 달라지면, 이 px 포지션은 깨져보일 수 있음.
+       필요하다면 % 단위로 고쳐주는 것이 좋음.
+    */
+
+    #page2Header {
+      position: absolute;
+      top: 77px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: black;
+      font-size: 20px;
+      font-family: Pretendard;
+      font-weight: 700;
+      line-height: 32px;
+      width: 100%;
+      max-width: 370px;
+    }
   </style>
 </head>
 <body>
-  <!-- 프레임 래퍼 -->
+
+  <!-- frame-wrapper 가로 = 100vw, 세로 = 비율에 따라 자동 결정 -->
   <div class="frame-wrapper" id="page2">
-    <div style="width:402px; height:874px; position:relative;">
+    <div style="width:402px; height:874px; position:absolute; top:0; left:0;">
+      <!-- 아래처럼 절대 배치된 요소가 많은 경우, px 단위가 그대로 적용되어
+           실제 폰에서 비례 축소/확대가 되지 않습니다.
+           즉, 402x874 고정 배경 위에 얹어놓은 형태라,
+           사실상 비율 기반 자동배치는 어려울 수 있음을 유의해주세요. -->
+
       <div style="position:absolute; top:54px; left:0; width:402px; height:48px; background:white;"></div>
-      <!-- Header -->
       <div id="page2Header">
         반가워요!<br/>아이의 이름이 무엇인가요?
       </div>
-      <!-- Previous button -->
+      <!-- 이전 버튼 -->
       <div id="prevBtn"
            style="position:absolute; left:17px; top:795px; width:82px; height:35px; padding:1px 46px; background:white; border-radius:8px; border:0.5px solid black; display:flex; justify-content:center; align-items:center; cursor:pointer;"
            onclick="prevStep()">
         <div style="color:black; font-size:16px; font-family:Pretendard; font-weight:500;">이전</div>
       </div>
-      <!-- Next button (티켓 만들기 버튼으로 사용) -->
+      <!-- 다음 버튼 -->
       <div id="nextBtn"
            style="position:absolute; left:209px; top:795px; width:82px; height:35px; padding:1px 46px; background:#208FFF; border-radius:8px; display:flex; justify-content:center; align-items:center; cursor:pointer;"
            onclick="nextStep()">
@@ -197,24 +224,11 @@
   </div>
 
   <script>
-    // 화면 크기에 맞춰 .frame-wrapper를 자동으로 scale 해주는 함수
-    function scaleFrame() {
-      // 우선 폭을 기준으로 맞춘 뒤, 높이가 넘치면 높이를 기준으로 맞추는 방식
-      var w = window.innerWidth;
-      var h = window.innerHeight;
-      var scaleValue = w / 402; // 폭 기준 먼저 맞춤
-      // 만약 이 scale 로 높이가 화면보다 크다면(=세로가 넘친다면)
-      if (874 * scaleValue > h) {
-        scaleValue = h / 874; // 세로 기준으로 재조정
-      }
-      var frameWrapper = document.querySelector('.frame-wrapper');
-      frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
-    }
+    // scrollX/scrollY 제거 및 핸드폰 가로로 꽉 채우되, 비율(402x874)만큼 세로 사용
+    // 이 방식은 내부 요소를 px로 배치하면, 확대/축소 대신 실제 크기로 표시될 수 있음.
 
-    window.addEventListener('load', scaleFrame);
-    window.addEventListener('resize', scaleFrame);
+    // 이하 기존 로직(이름/성별/나이/약관 단계 이동) ---------------------------------
 
-    // 이하 기존 로직(이름/성별/나이/약관 단계 이동) 그대로 유지
     var currentStep = 1; // 1: 이름 입력, 2: 성별 선택, 3: 나이 선택, 4: 정보 확인
     var selectedGender = "";
     var selectedAge = "";
