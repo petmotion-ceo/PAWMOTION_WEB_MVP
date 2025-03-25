@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <!--
-    user-scalable=no 로 설정하여 모바일 기기에서 사용자 줌 기능 제한.
-    같은 402×874 사이즈 + aspect-ratio 미디어쿼리로 전체 화면에 맞춰 줌.
+    user-scalable=no 로 설정.
+    402 × 874 레이아웃이 너무 길게 표시되어
+    모바일 기기에서 상단/하단이 잘리는 문제를 해결하려면,
+    화면폭·화면높이 중 더 작은 비율을 기준으로 일괄 축소.
   -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Mobile Layout with Local Fonts - Page 2</title>
@@ -32,25 +34,21 @@
     }
 
     /*
-      (1) html, body: 스크롤 없이 전체 화면 사용.
-      (2) .frame-wrapper: 402×874 원본 사이즈.
-      (3) aspect-ratio 미디어쿼리로 축소.
+      html, body: 스크롤 없이 전체화면.
+      .frame-wrapper: 402×874 원본.
+      @media(min|max-width/height) =>
+      화면 폭(너비)과 높이 중 더 작은 비율을 기준으로 scale.
     */
-
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
       box-sizing: border-box;
-      overflow: hidden; /* 스크롤 비활성 */
+      overflow: hidden;
       background: #F0F0F0;
     }
 
-    /*
-      원본 레이아웃 (402×874)
-      position:absolute 로 중앙 배치.
-    */
     .frame-wrapper {
       position: absolute;
       width: 402px;
@@ -65,23 +63,18 @@
     }
 
     /*
-      aspect-ratio 판단:
-      402:874 ~ 0.46.
-      기기가 이보다 "넓"은 경우 => 세로기준 스케일.
-      이보다 "좁"은 경우 => 가로기준 스케일.
+      기기의 폭 또는 높이가 원본(402×874)보다 작으면,
+      둘 중 더 작은 비율로 축소 => 상단/하단이 안 잘리게.
     */
-    @media screen and (min-aspect-ratio: 402/874) {
+    @media (max-width: 402px), (max-height: 874px) {
       .frame-wrapper {
-        transform: translate(-50%, -50%) scale(calc(100vh / 874));
-      }
-    }
-    @media screen and (max-aspect-ratio: 402/874) {
-      .frame-wrapper {
-        transform: translate(-50%, -50%) scale(calc(100vw / 402));
+        transform: translate(-50%, -50%) scale(
+          min(calc(100vw / 402), calc(100vh / 874))
+        );
       }
     }
 
-    /* 기존 버튼/텍스트 스타일 및 JS 로직에서 사용되는 클래스들의 CSS */
+    /* 기존 버튼/텍스트 스타일 */
     .gender-btn {
       flex: 1;
       margin: 0 5px;
@@ -130,10 +123,14 @@
       background: white;
       box-sizing: border-box;
       transition: transform 0.5s ease, opacity 0.5s ease;
+      margin-bottom: 20px; /* 입력박스간 하단여백 */
     }
 
-    .gender-input {
-      margin-bottom: 20px; /* 성별 텍스트 박스와 아이 이름 사이 여백 추가 */
+    /* 라벨들 간격 설정 */
+    #stepContainer .name-label,
+    #stepContainer .gender-label,
+    #stepContainer .age-label {
+      margin-bottom: 5px;
     }
 
     .slide-down {
@@ -151,14 +148,8 @@
       transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
-    #stepContainer .name-label, #stepContainer .gender-label, #stepContainer .age-label {
-      font-family: Pretendard;
-      font-weight: 500;
-      font-size: 12pt;
-      margin-bottom: 5px;
-      transition: transform 0.5s ease, opacity 0.5s ease;
-    }
-    #stepContainer .gender-container, #stepContainer .age-container {
+    #stepContainer .gender-container,
+    #stepContainer .age-container {
       display: flex;
       justify-content: space-between;
       width: 100%;
@@ -212,7 +203,7 @@
            onclick="prevStep()">
         <div style="color:black; font-size:16px; font-family:Pretendard; font-weight:500;">이전</div>
       </div>
-      <!-- Next button (티켓 만들기 버튼으로 사용) -->
+      <!-- Next button -->
       <div id="nextBtn" style="position:absolute; left:209px; top:795px; width:82px; height:35px; padding:1px 46px; background:#208FFF; border-radius:8px; display:flex; justify-content:center; align-items:center; cursor:pointer;"
            onclick="nextStep()">
         <div style="color:white; font-size:16px; font-family:Pretendard; font-weight:500;" id="nextBtnText">다음</div>
@@ -240,7 +231,6 @@
     const nameWarning = document.getElementById("nameWarning");
     const nextBtn = document.getElementById("nextBtn");
 
-    // 이름 입력 유효성 검사
     function validateName() {
       if (childNameInput.value.trim() === "") {
         nameWarning.style.display = "block";
@@ -255,7 +245,6 @@
     childNameInput.addEventListener("input", validateName);
     validateName();
 
-    // 약관 동의 체크박스 상태에 따른 버튼 활성화
     function updateTicketButtonState() {
       if (currentStep === 4) {
         if (termsAgreed) {
@@ -272,7 +261,6 @@
       if (currentStep === 1) {
         if (childNameInput.value.trim() === "") return;
 
-        // Step 1 -> Step 2
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "아이 성별은 무엇인가요?";
@@ -286,7 +274,6 @@
           setTimeout(() => {
             stepContainer.innerHTML = "";
 
-            // 성별 버튼
             var genderContainer = document.createElement("div");
             genderContainer.className = "gender-container";
             var maleBtn = document.createElement("button");
@@ -331,7 +318,6 @@
           alert("성별을 선택해주세요!");
           return;
         }
-        // Step 2 -> Step 3
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "거의다 왔어요!<br/>보호자분의 나이대가 어떻게 되나요?";
@@ -349,7 +335,6 @@
           setTimeout(() => {
             stepContainer.innerHTML = "";
 
-            // 나이 버튼
             var ageContainer = document.createElement("div");
             ageContainer.className = "age-container";
             const ageOptions = ["10대", "20대", "30대", "40대", "50대~"];
@@ -402,7 +387,6 @@
           alert("나이를 선택해주세요!");
           return;
         }
-        // Step 3 -> Step 4
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "입력하신 정보가 맞나요?<br/>이제 티켓을 발권하러 같이 가요!";
@@ -497,7 +481,6 @@
           alert("약관에 동의해주세요!");
           return;
         }
-        // Page 3로 이동하며 데이터 전달
         const urlParams = new URLSearchParams({
           childName: childNameInput.value,
           gender: selectedGender,
@@ -509,7 +492,6 @@
 
     function prevStep() {
       if (currentStep === 4) {
-        // Step 4 -> Step 3
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "거의다 왔어요!<br/>보호자분의 나이대가 어떻게 되나요?";
@@ -584,7 +566,6 @@
           }, 500);
         }, 300);
       } else if (currentStep === 3) {
-        // Step 3 -> Step 2
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "아이 성별은 무엇인가요?";
@@ -646,11 +627,10 @@
             stepContainer.appendChild(nameInput);
 
             currentStep = 2;
-            selectedAge = ""; // 나이 초기화
+            selectedAge = "";
           }, 500);
         }, 300);
       } else if (currentStep === 2) {
-        // Step 2 -> Step 1
         page2Header.classList.add("header-slide-out");
         setTimeout(() => {
           page2Header.innerHTML = "반가워요!<br/>아이의 이름이 무엇인가요?";
@@ -682,7 +662,7 @@
           }, 500);
         }, 300);
       } else {
-        window.location.href = "index.html"; // Page 1로 이동
+        window.location.href = "index.html"; // Page 1
       }
     }
   </script>
