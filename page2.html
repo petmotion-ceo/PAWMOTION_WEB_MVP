@@ -46,7 +46,7 @@
       position: absolute;
       top: 50%;       /* 화면 중앙 정렬 */
       left: 50%;
-      transform: translate(-50%, -50%) scale(1); /* scale(1)은 초기값 */
+      transform: translate(-50%, -50%) scale(1);
       transform-origin: center center;  /* 스케일 기준점 */
       background: #FFFFFF;
       box-shadow: 0 0 8px rgba(0,0,0,0.2);
@@ -199,12 +199,15 @@
   <script>
     // 화면 크기에 맞춰 .frame-wrapper를 자동으로 scale 해주는 함수
     function scaleFrame() {
+      // 우선 폭을 기준으로 맞춘 뒤, 높이가 넘치면 높이를 기준으로 맞추는 방식
       var w = window.innerWidth;
       var h = window.innerHeight;
-      // 402 x 874 비율 기준으로 최소값으로 스케일 결정
-      var scaleValue = Math.min(w / 402, h / 874);
+      var scaleValue = w / 402; // 폭 기준 먼저 맞춤
+      // 만약 이 scale 로 높이가 화면보다 크다면(=세로가 넘친다면)
+      if (874 * scaleValue > h) {
+        scaleValue = h / 874; // 세로 기준으로 재조정
+      }
       var frameWrapper = document.querySelector('.frame-wrapper');
-      // 중앙 정렬(translate(-50%, -50%)) 상태 유지하면서 scale 적용
       frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
     }
 
