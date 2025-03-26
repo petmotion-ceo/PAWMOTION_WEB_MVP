@@ -54,7 +54,6 @@
       background: #FFFFFF;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 0 8px rgba(0,0,0,0.2);
     }
     @media (max-width: 402px), (max-height: 874px) {
       .frame-wrapper {
@@ -373,6 +372,7 @@
     // 모델 로드 함수
     async function loadModel() {
       try {
+        // model 폴더 내 model.json을 로드 (모델과 .bin 파일들은 동일 폴더에 위치)
         model = await tf.loadLayersModel('model/model.json');
         isModelLoaded = true;
         console.log("모델 로드 완료");
@@ -406,21 +406,28 @@
     }
 
     // 이미지 전처리 함수
-    async function preprocessImage(imageElement) {
-      let tensor = tf.browser.fromPixels(imageElement);
-      const cropRatio = 0.85;
-      const h = tensor.shape[0];
-      const w = tensor.shape[1];
-      const cropH = Math.floor(h * cropRatio);
-      const cropW = Math.floor(w * cropRatio);
-      const startY = Math.floor((h - cropH) / 2);
-      const startX = Math.floor((w - cropW) / 2);
-      tensor = tensor.slice([startY, startX, 0], [cropH, cropW, 3]);
-      tensor = tf.image.resizeBilinear(tensor, [224, 224]);
-      tensor = tensor.toFloat().div(tf.scalar(127.5)).sub(tf.scalar(1.0));
-      tensor = tensor.expandDims(0);
-      return tensor;
-    }
+async function preprocessImage(imageElement) {
+  // 픽셀 텐서화
+  let tensor = tf.browser.fromPixels(imageElement);
+
+  // (1) 중앙 크롭(선택사항)
+  const cropRatio = 0.85;
+  const h = tensor.shape[0];
+  const w = tensor.shape[1];
+  const cropH = Math.floor(h * cropRatio);
+  const cropW = Math.floor(w * cropRatio);
+  const startY = Math.floor((h - cropH) / 2);
+  const startX = Math.floor((w - cropW) / 2);
+  tensor = tensor.slice([startY, startX, 0], [cropH, cropW, 3]);
+
+  // (2) 모델 입력 크기에 맞춰 리사이즈 => [192,192]로 수정
+  tensor = tf.image.resizeBilinear(tensor, [192, 192]);
+
+  // (3) 모델 내부에 Rescaling(1/255) 레이어가 이미 있으므로, 여기서는 단순히 batch 차원만 추가
+  tensor = tensor.expandDims(0);
+
+  return tensor;
+}
 
     // 이미지 업로드 함수
     function addImage(event) {
