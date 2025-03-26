@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <!--
+    user-scalable=no 로 설정해두면 모바일 기기에서 사용자 줌 기능을 제한합니다.
+    (필요 없으면 user-scalable=yes 로 두거나 제거)
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Mobile Layout with Local Fonts - Page 1</title>
+  <style>
+    /* ----- 폰트 임베딩 부분 ----- */
+    @font-face {
+      font-family: 'GmarketSans';
+      src: url('fonts/GmarketSansTTFLight.ttf') format('truetype');
+      font-weight: 300;
+      font-style: normal;
+    }
+    /* ... 나머지 폰트 생략 ... */
+
+    /*
+      전체 스크롤 없이, "한 화면에" 402x874 크기를 맞춰
+      보이도록 만들기 위해 html, body를 화면 전체 차지 & 숨김.
+    */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      overflow: hidden; /* 스크롤 비활성 */
+    }
+
+    /*
+      원본 레이아웃: 402 x 874.
+      절대 위치로 화면 중앙에 배치, 비율 유지.
+      (Aspect ratio ~ 402:874)
+    */
+    .frame-wrapper {
+      position: absolute;
+      width: 402px;
+      height: 874px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transform-origin: top left;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    /*
+      기기의 가로:세로 비가 402/874 (약 0.46)보다 큰 경우:
+      => 기기가 더 "넓고 낮"으므로 높이를 기준으로 축소.
+      (min-aspect-ratio: 402/874) => aspect-ratio >= 0.46.
+      여기서는 874px 대비 화면의 100vh 로 축소.
+    */
+    @media screen and (min-aspect-ratio: 402/874) {
+      .frame-wrapper {
+        transform: translate(-50%, -50%) scale(calc(100vh / 874));
+      }
+    }
+
+    /*
+      기기의 가로:세로 비가 402/874 (약 0.46)보다 작은 경우:
+      => 기기가 더 "좁고 길"으므로 너비를 기준으로 축소.
+      (max-aspect-ratio: 402/874) => aspect-ratio <= 0.46.
+      여기서는 402px 대비 화면의 100vw 로 축소.
+    */
+    @media screen and (max-aspect-ratio: 402/874) {
+      .frame-wrapper {
+        transform: translate(-50%, -50%) scale(calc(100vw / 402));
+      }
+    }
+
+    /* 폰트 관련 테스트 클래스 (원본 그대로) */
+    .test-gmarket-light { font-family: 'GmarketSans'; font-weight: 300; }
+    .test-pretendard-bold { font-family: 'Pretendard'; font-weight: 700; }
+    .test-nanum-flower { font-family: '나눔손글씨 꽃내음', sans-serif; font-weight: 400; }
+  </style>
+</head>
+<body>
+  <div class="frame-wrapper" id="page1">
+    <div data-layer="Frame 2613883" class="Frame2613883" 
+         style="width: 402px; height: 874px; position: relative;">
+      <div data-layer="iPhone 16 Pro - 45" class="Iphone16Pro45" 
+           style="width: 402px; height: 874px; position: absolute; background:#F4F4F4; overflow:hidden;">
+        <img src="assets/pawmotion_1page_3.svg" alt="pawmotion_bg" 
+             style="position:absolute; top:142px; left:50%; transform:translateX(-50%); width:402px; height:600px; z-index:0;" />
+        <div data-layer="Frame 2613856" class="Frame2613856" 
+             style="width: 402px; height:48px; padding:4px 5px; left:0; top:54px; position:absolute; background:white; display:flex; justify-content:center; align-items:center; gap:10px; z-index:5;">
+          <div data-layer="Frame 2613855" class="Frame2613855" style="width:111px; height:29px; position:relative;">
+            <img src="assets/pawmotion_1page_1.svg" alt="PERPET" 
+                 style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:111px; height:29px;" />
+          </div>
+        </div>
+        <div data-layer="Component 190" data-property-1="최종 첫화면" class="Component190" 
+             style="width:320px; height:584.94px; left:41px; top:145px; position:absolute; z-index:1;">
+          <div data-layer="pre MVP" data-property-1="첫화면" class="PreMvp" 
+               style="width:320px; height:584.94px; left:0; top:0; position:absolute;">
+            <div data-layer="Component 187" data-property-1="최종종 티켓" class="Component187" 
+                 style="width:320px; height:584.94px; left:0; top:0; position:absolute;">
+              <div data-layer="Vector" class="Vector" 
+                   style="width:320px; height:93.94px; left:0; bottom:0; position:absolute; background:transparent;"></div>
+              <div data-layer="Vector" class="Vector" 
+                   style="width:320px; height:490.83px; left:0; top:0; position:absolute; background:transparent;"></div>
+            </div>
+            <img data-layer="Pet Care" class="PetCare"
+                 style="width:276px; height:216px; left:7px; top:133.22px; position:absolute; transform:rotate(-9deg); transform-origin:top left;"
+                 src="assets/pawmotion_1page_2.svg" alt="center_image" />
+            <div data-layer="@PERPET" class="Perpet test-nanum-flower"
+                 style="left:243px; top:24px; position:absolute; color:black; font-size:12px; font-weight:400; line-height:24px; word-wrap:break-word;">
+              @PERPET
+            </div>
+            <div data-layer="우리 강하띠 티켓 일기 쓰기!"
+                 style="left:55px; top:73px; position:absolute; text-align:center; color:black; font-size:20px; font-family:Pretendard; font-weight:500; line-height:28px; word-wrap:break-word;">
+              우리 강하띠 티켓 일기 쓰기!
+            </div>
+            <div data-layer="퍼펫과 함께하는 내 강아지 감정 티켓 일기"
+                 style="left:66px; top:334px; position:absolute; text-align:center; color:black; font-size:20px; font-family:Pretendard; font-weight:700; line-height:28px; word-wrap:break-word;">
+              퍼펫과 함께하는<br/>내 강아지 감정 티켓 일기
+            </div>
+            <div data-layer="Frame 2613853" class="Frame2613853"
+                 style="width:240px; height:36px; padding:6px 25px; left:16px; top:530px; position:absolute; background:#208FFF; border-radius:4px; display:flex; justify-content:center; align-items:center; gap:10px; cursor:pointer;"
+                 onclick="window.location.href='page2.html';">
+              <div data-layer="바로 시작하기"
+                   style="color:white; font-size:16px; font-family:Pretendard; font-weight:500; line-height:36px; word-wrap:break-word;">
+                바로 시작하기
+              </div>
+            </div>
+            <div data-layer="Frame 2613858" class="Frame2613858"
+                 style="width:50px; height:30px; padding:6px 20px; left:16px; top:421px; position:absolute; background:#FCFAFA; box-shadow:0px 1px 2px rgba(0,0,0,0.25); border-radius:100px; display:flex; justify-content:center; align-items:center; gap:10px;">
+              <div data-layer="#강아지"
+                   style="color:black; font-size:12px; font-family:Pretendard; font-weight:500; line-height:24px; word-wrap:break-word;">
+                #강아지
+              </div>
+            </div>
+            <div data-layer="Frame 2613860" class="Frame2613860"
+                 style="width:50px; height:30px; padding:6px 20px; left:114px; top:421px; position:absolute; background:#FCFAFA; box-shadow:0px 1px 2px rgba(0,0,0,0.25); border-radius:100px; display:flex; justify-content:center; align-items:center; gap:10px;">
+              <div data-layer="#감정필터"
+                   style="color:black; font-size:12px; font-family:Pretendard; font-weight:500; line-height:24px; word-wrap:break-word;">
+                #감정필터
+              </div>
+            </div>
+            <div data-layer="Frame 2613861" class="Frame2613861"
+                 style="width:50px; height:30px; padding:6px 20px; left:212px; top:421px; position:absolute; background:#FCFAFA; box-shadow:0px 1px 2px rgba(0,0,0,0.25); border-radius:100px; display:flex; justify-content:center; align-items:center; gap:10px;">
+              <div data-layer="#반려일기"
+                   style="color:black; font-size:12px; font-family:Pretendard; font-weight:500; line-height:24px; word-wrap:break-word;">
+                #반려일기
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
