@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mobile Layout with Local Fonts - Page 3</title>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <!-- html2canvas 라이브러리 추가 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     @font-face {
       font-family: 'GmarketSans';
@@ -300,11 +302,11 @@
 <body>
   <div class="frame-wrapper" id="page3">
     <div class="page3-background">
-      <img src="assets/pawmotion_3page_2.svg" alt="page3 background" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
+      <img id="backgroundImage" src="assets/pawmotion_3page_2.svg" alt="page3 background" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
       <div class="ticket-title">
         <span id="ticketChildName" class="child-name"></span><span class="suffix">의 감정 티켓 발행 완료!</span>
       </div>
-      <div class="save-btn" id="saveBtn">
+      <div class="save-btn" id="saveBtn" onclick="saveAsImage()">
         <div class="save-btn-text">이미지로 저장하기</div>
       </div>
       <div class="ticket-container">
@@ -334,11 +336,11 @@
       </div>
     </div>
   </div>
+
   <script>
     // URL 파라미터에서 데이터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const childName = urlParams.get('childName') || "이름 없음";
-    // 이름 삽입
     document.getElementById("ticketChildName").textContent = childName;
     // 현재 날짜 삽입 (YYYY.MM.DD 형식)
     const today = new Date();
@@ -368,7 +370,7 @@
         alert("모델을 로드하는 데 실패했습니다. 페이지를 새로고침해 주세요.");
       }
     }
-    // 분석 버튼 상태 확인 및 업데이트
+    // 분석 버튼 상태 업데이트
     function checkAnalyzeButtonState() {
       const analyzeBtn = document.getElementById("analyzeBtn");
       if (isImageUploaded && isModelLoaded) {
@@ -470,6 +472,24 @@
           alert("감정 분석 중 오류가 발생했습니다. 다시 시도해 주세요.");
         }, 2000);
       }
+    }
+    // saveAsImage 함수: .page3-background 영역에서 y=172, 높이600px 크기로 캡쳐 후 다운로드
+    function saveAsImage() {
+      html2canvas(document.querySelector('.page3-background')).then(canvas => {
+        const cropX = 0;
+        const cropY = 172;
+        const cropWidth = 432;
+        const cropHeight = 600;
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = cropWidth;
+        croppedCanvas.height = cropHeight;
+        const ctx = croppedCanvas.getContext('2d');
+        ctx.drawImage(canvas, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+        const link = document.createElement('a');
+        link.download = 'ticket.png';
+        link.href = croppedCanvas.toDataURL('image/png');
+        link.click();
+      });
     }
     // scaleFrame 함수: 창 크기에 맞춰 .frame-wrapper 스케일 적용
     function scaleFrame() {
