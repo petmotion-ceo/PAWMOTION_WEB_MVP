@@ -399,21 +399,6 @@
       }
     }
 
-    // 페이지 로드 시 모델 로드
-    window.onload = function() {
-      scaleFrame();
-      loadModel();
-    };
-
-    // 랜덤 코드 생성 함수
-    function generateRandomCode() {
-      const part1 = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
-      const part2 = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-      const part3 = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-      const part4 = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
-      return `${part1}-${part2}-${part3}-${part4}`;
-    }
-
     // 이미지 전처리 함수
     async function preprocessImage(imageElement) {
       let tensor = tf.browser.fromPixels(imageElement);
@@ -500,6 +485,28 @@
         }, 2000);
       }
     }
+
+    // 랜덤 코드 생성 함수
+    function generateRandomCode() {
+      const part1 = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
+      const part2 = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+      const part3 = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+      const part4 = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
+      return `${part1}-${part2}-${part3}-${part4}`;
+    }
+
+    // 텍스트 박스(일기 입력 영역) 클릭 시 스크롤 가능하도록 이벤트 추가
+    window.addEventListener("load", function() {
+      loadModel();
+      const ticketComment = document.getElementById("ticketComment");
+      ticketComment.addEventListener("focus", function() {
+        document.body.style.overflow = "auto";
+        ticketComment.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+      ticketComment.addEventListener("blur", function() {
+        document.body.style.overflow = "hidden";
+      });
+    });
   </script>
 </body>
 </html>
