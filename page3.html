@@ -2,12 +2,12 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <!-- 모바일 디바이스에서 초기 스케일 고정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mobile Layout with Local Fonts - Page 3</title>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-  <!-- html2canvas 라이브러리 추가 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
+    /* 폰트 정의 */
     @font-face {
       font-family: 'GmarketSans';
       src: url('fonts/GmarketSansTTFMedium.ttf') format('truetype');
@@ -38,6 +38,7 @@
       font-weight: 400;
       font-style: normal;
     }
+    /* 기본 레이아웃: 스크롤 없고 중앙 고정 */
     html, body {
       margin: 0;
       padding: 0;
@@ -45,27 +46,22 @@
       height: 100%;
       background: #FFFFFF;
       overflow: hidden;
+      box-sizing: border-box;
     }
-    /* 프레임 폭을 480px로 변경 */
     .frame-wrapper {
-      width: 480px;
+      width: 432px;
       height: 874px;
+      background: #FFFFFF;
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(1);
       transform-origin: center center;
-      background: #FFFFFF;
       overflow: hidden;
     }
-    /* 모바일 대응 미디어 쿼리 */
-    @media (max-width: 480px), (max-height: 874px) {
-      .frame-wrapper {
-        transform: translate(-50%, -50%) scale(calc(min(100vw / 480, 100vh / 874)));
-      }
-    }
+    /* 내부 페이지3 스타일 */
     .page3-background {
-      width: 480px;
+      width: 432px;
       height: 874px;
       background: #F4F4F4;
       position: absolute;
@@ -73,10 +69,9 @@
       top: 0;
       overflow: hidden;
     }
-    /* ticket-title: 좌측 22px→24px */
     .ticket-title {
       position: absolute;
-      left: 24px;
+      left: 22px;
       top: 126px;
     }
     .ticket-title .child-name {
@@ -93,12 +88,11 @@
       font-weight: 500;
       line-height: 28px;
     }
-    /* save-btn: 폭 287px→319px, 좌측 57px→63px */
     .save-btn {
       position: absolute;
-      width: 319px;
+      width: 287px;
       height: 48px;
-      left: 63px;
+      left: 72px;
       top: 779px;
       background: #208FFF;
       border-radius: 4px;
@@ -114,17 +108,15 @@
       font-weight: 500;
       line-height: 18.75px;
     }
-    /* ticket-container: 폭 320px→356px, 좌측 41px→46px */
     .ticket-container {
-      width: 356px;
+      width: 320px;
       height: 584.94px;
       position: absolute;
-      left: 46px;
+      left: 56px;
       top: 178px;
     }
-    /* ticket-top & ticket-bottom도 container 폭에 맞춤 */
     .ticket-bottom {
-      width: 356px;
+      width: 320px;
       height: 93.94px;
       position: absolute;
       left: 0;
@@ -132,19 +124,18 @@
       background: transparent;
     }
     .ticket-top {
-      width: 356px;
+      width: 320px;
       height: 490.83px;
       position: absolute;
       left: 0;
       top: 0;
       background: transparent;
     }
-    /* ticket-comment: 폭 265px→294px, 좌측 30px→33px */
     .ticket-comment {
-      width: 294px;
+      width: 265px;
       height: 60px;
       position: absolute;
-      left: 33px;
+      left: 30px;
       top: 426px;
       color: black;
       font-size: 16px;
@@ -161,10 +152,9 @@
       color: #888;
       opacity: 0.8;
     }
-    /* ticket-perpet: 좌측 244px→271px */
     .ticket-perpet {
       position: absolute;
-      left: 271px;
+      left: 244px;
       top: 398px;
       color: black;
       font-size: 12px;
@@ -172,9 +162,8 @@
       font-weight: 700;
       line-height: 24px;
     }
-    /* emotion-bar: 폭 320px→356px */
     .emotion-bar {
-      width: 356px;
+      width: 320px;
       height: 36px;
       position: absolute;
       left: 0;
@@ -191,20 +180,16 @@
       font-weight: 500;
       line-height: 24px;
     }
-    /* ticket-images: 중앙 배치 */
-    .ticket-images {
-      display: none;
-    }
     .ticket-images img {
       position: absolute;
       top: 519px;
-      left: 50%;
-      transform: translateX(-50%);
     }
-    /* ticket-code: 좌측 64px→71px */
+    .ticket-images {
+      display: none;
+    }
     .ticket-code {
       position: absolute;
-      left: 71px;
+      left: 64px;
       top: 551px;
       color: black;
       font-size: 12px;
@@ -213,10 +198,9 @@
       line-height: 24px;
       display: none;
     }
-    /* ticket-date: 좌측 16px→18px */
     .ticket-date {
       position: absolute;
-      left: 18px;
+      left: 16px;
       top: 11px;
       color: black;
       font-size: 20px;
@@ -224,21 +208,19 @@
       font-weight: 400;
       line-height: 24px;
     }
-    /* top-bar: 폭 432px→480px */
     .top-bar {
-      width: 480px;
+      width: 432px;
       height: 48px;
       position: absolute;
       left: 0;
       top: 54px;
       background: #FAFAFA;
     }
-    /* back-btn: 좌측 40px→44px */
     .back-btn {
       width: 24px;
       height: 24px;
       position: absolute;
-      left: 44px;
+      left: 40px;
       top: 12px;
       cursor: pointer;
     }
@@ -253,12 +235,11 @@
       font-weight: 500;
       line-height: 35px;
     }
-    /* add-image-btn: 폭 300px→333px, 좌측 10px→11px */
     .add-image-btn {
       position: absolute;
-      width: 333px;
+      width: 300px;
       height: 330px;
-      left: 11px;
+      left: 10px;
       top: 90px;
       background: #D9D9D9;
       border-radius: 4px;
@@ -274,12 +255,11 @@
     .hidden-file-input {
       display: none;
     }
-    /* analyze-btn: 폭 287px→319px, 좌측 57px→63px */
     .analyze-btn {
       position: absolute;
-      width: 319px;
+      width: 287px;
       height: 48px;
-      left: 63px;
+      left: 72px;
       top: 709px;
       background: #208FFF;
       border-radius: 12px;
@@ -325,12 +305,11 @@
 <body>
   <div class="frame-wrapper" id="page3">
     <div class="page3-background">
-      <!-- 배경 이미지 폭 480px, 상단 172px부터 600px 높이 -->
-      <img id="backgroundImage" src="assets/pawmotion_3page_2.svg" alt="page3 background" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:480px; height:600px; z-index:0;" />
+      <img src="assets/pawmotion_3page_2.svg" alt="page3 background" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
       <div class="ticket-title">
         <span id="ticketChildName" class="child-name"></span><span class="suffix">의 감정 티켓 발행 완료!</span>
       </div>
-      <div class="save-btn" id="saveBtn" onclick="saveAsImage()">
+      <div class="save-btn" id="saveBtn">
         <div class="save-btn-text">이미지로 저장하기</div>
       </div>
       <div class="ticket-container">
@@ -362,19 +341,33 @@
   </div>
 
   <script>
+    // 화면 크기에 따라 .frame-wrapper scale 적용
+    function scaleFrame() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      var scaleValue = Math.min(w / 432, h / 874);
+      var frameWrapper = document.querySelector('.frame-wrapper');
+      frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
+    }
+    window.addEventListener('load', scaleFrame);
+    window.addEventListener('resize', scaleFrame);
+
     // URL 파라미터에서 데이터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const childName = urlParams.get('childName') || "이름 없음";
     document.getElementById("ticketChildName").textContent = childName;
+
     // 현재 날짜 삽입 (YYYY.MM.DD 형식)
     const today = new Date();
     const formattedDate = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
     document.getElementById("currentDate").textContent = formattedDate;
+
     // 상태 변수
     let isImageUploaded = false;
     let uploadedImage = null;
     let model = null;
     let isModelLoaded = false;
+
     // 감정 매핑
     const emotionMapping = {
       0: { text: "😣 ANGRY", class: "angry" },
@@ -382,6 +375,7 @@
       2: { text: "😊 RELAXED", class: "relaxed" },
       3: { text: "😄 HAPPY", class: "happy" }
     };
+
     // 모델 로드 함수
     async function loadModel() {
       try {
@@ -394,7 +388,8 @@
         alert("모델을 로드하는 데 실패했습니다. 페이지를 새로고침해 주세요.");
       }
     }
-    // 분석 버튼 상태 업데이트
+
+    // 분석 버튼 상태 확인 및 업데이트
     function checkAnalyzeButtonState() {
       const analyzeBtn = document.getElementById("analyzeBtn");
       if (isImageUploaded && isModelLoaded) {
@@ -403,11 +398,13 @@
         analyzeBtn.classList.remove("active");
       }
     }
-    // 페이지 로드 시 모델 로드 및 스케일 적용
+
+    // 페이지 로드 시 모델 로드
     window.onload = function() {
-      loadModel();
       scaleFrame();
+      loadModel();
     };
+
     // 랜덤 코드 생성 함수
     function generateRandomCode() {
       const part1 = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
@@ -416,6 +413,7 @@
       const part4 = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
       return `${part1}-${part2}-${part3}-${part4}`;
     }
+
     // 이미지 전처리 함수
     async function preprocessImage(imageElement) {
       let tensor = tf.browser.fromPixels(imageElement);
@@ -431,6 +429,7 @@
       tensor = tensor.expandDims(0);
       return tensor;
     }
+
     // 이미지 업로드 함수
     function addImage(event) {
       const file = event.target.files[0];
@@ -443,7 +442,7 @@
           img.style.position = "absolute";
           img.style.width = "300px";
           img.style.height = "330px";
-          img.style.left = "11px";
+          img.style.left = "10px";
           img.style.top = "90px";
           img.style.objectFit = "cover";
           img.style.zIndex = "10";
@@ -456,10 +455,12 @@
         reader.readAsDataURL(file);
       }
     }
+
     // 감정 분석 함수
     async function analyzeEmotion() {
       const analyzeBtn = document.getElementById("analyzeBtn");
       const analyzeBtnText = document.getElementById("analyzeBtnText");
+
       if (!isImageUploaded) {
         alert("먼저 이미지를 업로드해 주세요.");
         return;
@@ -468,9 +469,11 @@
         alert("모델이 아직 로드 중입니다. 잠시 기다려주세요.");
         return;
       }
+
       analyzeBtn.classList.add("loading");
       analyzeBtn.style.pointerEvents = "none";
       analyzeBtnText.textContent = "분석 중...";
+
       try {
         const processedImage = await preprocessImage(uploadedImage);
         const prediction = model.predict(processedImage);
@@ -497,33 +500,6 @@
         }, 2000);
       }
     }
-    // saveAsImage 함수: .page3-background 영역에서 y=172, 높이600px 크기로 캡쳐 후 다운로드
-    function saveAsImage() {
-      html2canvas(document.querySelector('.page3-background')).then(canvas => {
-        const cropX = 0;
-        const cropY = 172;
-        const cropWidth = 480;
-        const cropHeight = 600;
-        const croppedCanvas = document.createElement('canvas');
-        croppedCanvas.width = cropWidth;
-        croppedCanvas.height = cropHeight;
-        const ctx = croppedCanvas.getContext('2d');
-        ctx.drawImage(canvas, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-        const link = document.createElement('a');
-        link.download = 'ticket.png';
-        link.href = croppedCanvas.toDataURL('image/png');
-        link.click();
-      });
-    }
-    // scaleFrame 함수: 기준 480x874에 맞춰 스케일 적용
-    function scaleFrame() {
-      var w = window.innerWidth;
-      var h = window.innerHeight;
-      var scaleValue = Math.min(w / 480, h / 874);
-      var frameWrapper = document.querySelector('.frame-wrapper');
-      frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
-    }
-    window.addEventListener('resize', scaleFrame);
   </script>
 </body>
 </html>
