@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mobile Layout with Local Fonts - Page 3</title>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <!-- html2canvas 라이브러리 추가 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     @font-face {
       font-family: 'GmarketSans';
@@ -39,31 +41,31 @@
     html, body {
       margin: 0;
       padding: 0;
-      background: #F0F0F0;
       width: 100%;
       height: 100%;
-      overflow: auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-sizing: border-box;
-    }
-    .frame-wrapper {
-      width: 402px;
-      height: 874px;
       background: #FFFFFF;
-      position: relative;
       overflow: hidden;
     }
-    @media (max-width: 402px), (max-height: 874px) {
+    .frame-wrapper {
+      width: 432px;
+      height: 874px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      /* 기본 scale은 1.0, 미디어 쿼리에서 자동 조정 */
+      transform: translate(-50%, -50%) scale(1);
+      transform-origin: center center;
+      background: #FFFFFF;
+      overflow: hidden;
+    }
+    /* 모바일 대응 미디어 쿼리 (page2와 동일) */
+    @media (max-width: 432px), (max-height: 874px) {
       .frame-wrapper {
-        transform: scale(min(calc(100vw / 402), calc(100vh / 874)));
-        transform-origin: top center;
-        height: auto;
+        transform: translate(-50%, -50%) scale(calc(min(100vw / 432, 100vh / 874)));
       }
     }
     .page3-background {
-      width: 402px;
+      width: 432px;
       height: 874px;
       background: #F4F4F4;
       position: absolute;
@@ -211,10 +213,10 @@
       line-height: 24px;
     }
     .top-bar {
-      width: 402px;
+      width: 432px;
       height: 48px;
       position: absolute;
-      left: 1px;
+      left: 0;
       top: 54px;
       background: #FAFAFA;
     }
@@ -307,11 +309,11 @@
 <body>
   <div class="frame-wrapper" id="page3">
     <div class="page3-background">
-      <img src="assets/pawmotion_3page_2.svg" alt="page3 background" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:402px; height:600px; z-index:0;" />
+      <img id="backgroundImage" src="assets/pawmotion_3page_2.svg" alt="page3 background" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
       <div class="ticket-title">
         <span id="ticketChildName" class="child-name"></span><span class="suffix">의 감정 티켓 발행 완료!</span>
       </div>
-      <div class="save-btn" id="saveBtn">
+      <div class="save-btn" id="saveBtn" onclick="saveAsImage()">
         <div class="save-btn-text">이미지로 저장하기</div>
       </div>
       <div class="ticket-container">
@@ -346,21 +348,16 @@
     // URL 파라미터에서 데이터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const childName = urlParams.get('childName') || "이름 없음";
-
-    // 이름 삽입
     document.getElementById("ticketChildName").textContent = childName;
-
     // 현재 날짜 삽입 (YYYY.MM.DD 형식)
     const today = new Date();
     const formattedDate = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
     document.getElementById("currentDate").textContent = formattedDate;
-
     // 상태 변수
     let isImageUploaded = false;
     let uploadedImage = null;
     let model = null;
     let isModelLoaded = false;
-
     // 감정 매핑
     const emotionMapping = {
       0: { text: "😣 ANGRY", class: "angry" },
@@ -368,11 +365,9 @@
       2: { text: "😊 RELAXED", class: "relaxed" },
       3: { text: "😄 HAPPY", class: "happy" }
     };
-
     // 모델 로드 함수
     async function loadModel() {
       try {
-        // model 폴더 내 model.json을 로드 (모델과 .bin 파일들은 동일 폴더에 위치)
         model = await tf.loadLayersModel('model/model.json');
         isModelLoaded = true;
         console.log("모델 로드 완료");
@@ -382,8 +377,7 @@
         alert("모델을 로드하는 데 실패했습니다. 페이지를 새로고침해 주세요.");
       }
     }
-
-    // 분석 버튼 상태 확인 및 업데이트
+    // 분석 버튼 상태 업데이트
     function checkAnalyzeButtonState() {
       const analyzeBtn = document.getElementById("analyzeBtn");
       if (isImageUploaded && isModelLoaded) {
@@ -392,10 +386,11 @@
         analyzeBtn.classList.remove("active");
       }
     }
-
-    // 페이지 로드 시 모델 로드
-    window.onload = loadModel;
-
+    // 페이지 로드 시 모델 로드 및 스케일 적용
+    window.onload = function() {
+      loadModel();
+      scaleFrame();
+    };
     // 랜덤 코드 생성 함수
     function generateRandomCode() {
       const part1 = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
@@ -404,31 +399,21 @@
       const part4 = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
       return `${part1}-${part2}-${part3}-${part4}`;
     }
-
     // 이미지 전처리 함수
-async function preprocessImage(imageElement) {
-  // 픽셀 텐서화
-  let tensor = tf.browser.fromPixels(imageElement);
-
-  // (1) 중앙 크롭(선택사항)
-  const cropRatio = 0.85;
-  const h = tensor.shape[0];
-  const w = tensor.shape[1];
-  const cropH = Math.floor(h * cropRatio);
-  const cropW = Math.floor(w * cropRatio);
-  const startY = Math.floor((h - cropH) / 2);
-  const startX = Math.floor((w - cropW) / 2);
-  tensor = tensor.slice([startY, startX, 0], [cropH, cropW, 3]);
-
-  // (2) 모델 입력 크기에 맞춰 리사이즈 => [192,192]로 수정
-  tensor = tf.image.resizeBilinear(tensor, [192, 192]);
-
-  // (3) 모델 내부에 Rescaling(1/255) 레이어가 이미 있으므로, 여기서는 단순히 batch 차원만 추가
-  tensor = tensor.expandDims(0);
-
-  return tensor;
-}
-
+    async function preprocessImage(imageElement) {
+      let tensor = tf.browser.fromPixels(imageElement);
+      const cropRatio = 0.85;
+      const h = tensor.shape[0];
+      const w = tensor.shape[1];
+      const cropH = Math.floor(h * cropRatio);
+      const cropW = Math.floor(w * cropRatio);
+      const startY = Math.floor((h - cropH) / 2);
+      const startX = Math.floor((w - cropW) / 2);
+      tensor = tensor.slice([startY, startX, 0], [cropH, cropW, 3]);
+      tensor = tf.image.resizeBilinear(tensor, [192, 192]);
+      tensor = tensor.expandDims(0);
+      return tensor;
+    }
     // 이미지 업로드 함수
     function addImage(event) {
       const file = event.target.files[0];
@@ -445,10 +430,8 @@ async function preprocessImage(imageElement) {
           img.style.top = "90px";
           img.style.objectFit = "cover";
           img.style.zIndex = "10";
-
           const ticketContainer = document.querySelector(".ticket-container");
           ticketContainer.appendChild(img);
-
           uploadedImage = img;
           isImageUploaded = true;
           checkAnalyzeButtonState();
@@ -456,12 +439,10 @@ async function preprocessImage(imageElement) {
         reader.readAsDataURL(file);
       }
     }
-
     // 감정 분석 함수
     async function analyzeEmotion() {
       const analyzeBtn = document.getElementById("analyzeBtn");
       const analyzeBtnText = document.getElementById("analyzeBtnText");
-
       if (!isImageUploaded) {
         alert("먼저 이미지를 업로드해 주세요.");
         return;
@@ -470,20 +451,16 @@ async function preprocessImage(imageElement) {
         alert("모델이 아직 로드 중입니다. 잠시 기다려주세요.");
         return;
       }
-
       analyzeBtn.classList.add("loading");
       analyzeBtn.style.pointerEvents = "none";
       analyzeBtnText.textContent = "분석 중...";
-
       try {
         const processedImage = await preprocessImage(uploadedImage);
         const prediction = model.predict(processedImage);
         const predArray = prediction.dataSync();
         const predClass = predArray.indexOf(Math.max(...predArray));
-
         const emotionResult = emotionMapping[predClass];
         document.getElementById("emotionText").textContent = emotionResult.text;
-
         setTimeout(() => {
           document.getElementById("ticketImages").style.display = "block";
           document.getElementById("ticketCode").style.display = "block";
@@ -491,7 +468,6 @@ async function preprocessImage(imageElement) {
           document.getElementById("saveBtn").style.display = "flex";
           analyzeBtn.style.display = "none";
         }, 2000);
-
         console.log("감정 예측 결과:", emotionResult.text, "확률:", predArray);
       } catch (error) {
         console.error("감정 분석 오류:", error);
@@ -504,6 +480,33 @@ async function preprocessImage(imageElement) {
         }, 2000);
       }
     }
+    // saveAsImage 함수: .page3-background 영역에서 y=172, 높이600px 크기로 캡쳐 후 다운로드
+    function saveAsImage() {
+      html2canvas(document.querySelector('.page3-background')).then(canvas => {
+        const cropX = 0;
+        const cropY = 172;
+        const cropWidth = 432;
+        const cropHeight = 600;
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = cropWidth;
+        croppedCanvas.height = cropHeight;
+        const ctx = croppedCanvas.getContext('2d');
+        ctx.drawImage(canvas, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+        const link = document.createElement('a');
+        link.download = 'ticket.png';
+        link.href = croppedCanvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+    // scaleFrame 함수: 창 크기에 맞춰 .frame-wrapper 스케일 적용
+    function scaleFrame() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      var scaleValue = Math.min(w / 432, h / 874);
+      var frameWrapper = document.querySelector('.frame-wrapper');
+      frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
+    }
+    window.addEventListener('resize', scaleFrame);
   </script>
 </body>
 </html>
