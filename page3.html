@@ -46,26 +46,26 @@
       background: #FFFFFF;
       overflow: hidden;
     }
+    /* 프레임 폭을 480px로 변경 */
     .frame-wrapper {
-      width: 432px;
+      width: 480px;
       height: 874px;
       position: fixed;
       top: 50%;
       left: 50%;
-      /* 기본 scale은 1.0, 미디어 쿼리에서 자동 조정 */
       transform: translate(-50%, -50%) scale(1);
       transform-origin: center center;
       background: #FFFFFF;
       overflow: hidden;
     }
-    /* 모바일 대응 미디어 쿼리 (page2와 동일) */
-    @media (max-width: 432px), (max-height: 874px) {
+    /* 모바일 대응 미디어 쿼리 */
+    @media (max-width: 480px), (max-height: 874px) {
       .frame-wrapper {
-        transform: translate(-50%, -50%) scale(calc(min(100vw / 432, 100vh / 874)));
+        transform: translate(-50%, -50%) scale(calc(min(100vw / 480, 100vh / 874)));
       }
     }
     .page3-background {
-      width: 432px;
+      width: 480px;
       height: 874px;
       background: #F4F4F4;
       position: absolute;
@@ -73,9 +73,10 @@
       top: 0;
       overflow: hidden;
     }
+    /* ticket-title: 좌측 22px→24px */
     .ticket-title {
       position: absolute;
-      left: 22px;
+      left: 24px;
       top: 126px;
     }
     .ticket-title .child-name {
@@ -92,11 +93,12 @@
       font-weight: 500;
       line-height: 28px;
     }
+    /* save-btn: 폭 287px→319px, 좌측 57px→63px */
     .save-btn {
       position: absolute;
-      width: 287px;
+      width: 319px;
       height: 48px;
-      left: 57px;
+      left: 63px;
       top: 779px;
       background: #208FFF;
       border-radius: 4px;
@@ -112,15 +114,17 @@
       font-weight: 500;
       line-height: 18.75px;
     }
+    /* ticket-container: 폭 320px→356px, 좌측 41px→46px */
     .ticket-container {
-      width: 320px;
+      width: 356px;
       height: 584.94px;
       position: absolute;
-      left: 41px;
+      left: 46px;
       top: 178px;
     }
+    /* ticket-top & ticket-bottom도 container 폭에 맞춤 */
     .ticket-bottom {
-      width: 320px;
+      width: 356px;
       height: 93.94px;
       position: absolute;
       left: 0;
@@ -128,18 +132,19 @@
       background: transparent;
     }
     .ticket-top {
-      width: 320px;
+      width: 356px;
       height: 490.83px;
       position: absolute;
       left: 0;
       top: 0;
       background: transparent;
     }
+    /* ticket-comment: 폭 265px→294px, 좌측 30px→33px */
     .ticket-comment {
-      width: 265px;
+      width: 294px;
       height: 60px;
       position: absolute;
-      left: 30px;
+      left: 33px;
       top: 426px;
       color: black;
       font-size: 16px;
@@ -156,9 +161,10 @@
       color: #888;
       opacity: 0.8;
     }
+    /* ticket-perpet: 좌측 244px→271px */
     .ticket-perpet {
       position: absolute;
-      left: 244px;
+      left: 271px;
       top: 398px;
       color: black;
       font-size: 12px;
@@ -166,8 +172,9 @@
       font-weight: 700;
       line-height: 24px;
     }
+    /* emotion-bar: 폭 320px→356px */
     .emotion-bar {
-      width: 320px;
+      width: 356px;
       height: 36px;
       position: absolute;
       left: 0;
@@ -184,16 +191,20 @@
       font-weight: 500;
       line-height: 24px;
     }
-    .ticket-images img {
-      position: absolute;
-      top: 519px;
-    }
+    /* ticket-images: 중앙 배치 */
     .ticket-images {
       display: none;
     }
+    .ticket-images img {
+      position: absolute;
+      top: 519px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    /* ticket-code: 좌측 64px→71px */
     .ticket-code {
       position: absolute;
-      left: 64px;
+      left: 71px;
       top: 551px;
       color: black;
       font-size: 12px;
@@ -202,9 +213,10 @@
       line-height: 24px;
       display: none;
     }
+    /* ticket-date: 좌측 16px→18px */
     .ticket-date {
       position: absolute;
-      left: 16px;
+      left: 18px;
       top: 11px;
       color: black;
       font-size: 20px;
@@ -212,19 +224,21 @@
       font-weight: 400;
       line-height: 24px;
     }
+    /* top-bar: 폭 432px→480px */
     .top-bar {
-      width: 432px;
+      width: 480px;
       height: 48px;
       position: absolute;
       left: 0;
       top: 54px;
       background: #FAFAFA;
     }
+    /* back-btn: 좌측 40px→44px */
     .back-btn {
       width: 24px;
       height: 24px;
       position: absolute;
-      left: 40px;
+      left: 44px;
       top: 12px;
       cursor: pointer;
     }
@@ -239,11 +253,12 @@
       font-weight: 500;
       line-height: 35px;
     }
+    /* add-image-btn: 폭 300px→333px, 좌측 10px→11px */
     .add-image-btn {
       position: absolute;
-      width: 300px;
+      width: 333px;
       height: 330px;
-      left: 10px;
+      left: 11px;
       top: 90px;
       background: #D9D9D9;
       border-radius: 4px;
@@ -259,11 +274,12 @@
     .hidden-file-input {
       display: none;
     }
+    /* analyze-btn: 폭 287px→319px, 좌측 57px→63px */
     .analyze-btn {
       position: absolute;
-      width: 287px;
+      width: 319px;
       height: 48px;
-      left: 57px;
+      left: 63px;
       top: 709px;
       background: #208FFF;
       border-radius: 12px;
@@ -309,7 +325,8 @@
 <body>
   <div class="frame-wrapper" id="page3">
     <div class="page3-background">
-      <img id="backgroundImage" src="assets/pawmotion_3page_2.svg" alt="page3 background" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
+      <!-- 배경 이미지 폭 480px, 상단 172px부터 600px 높이 -->
+      <img id="backgroundImage" src="assets/pawmotion_3page_2.svg" alt="page3 background" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:480px; height:600px; z-index:0;" />
       <div class="ticket-title">
         <span id="ticketChildName" class="child-name"></span><span class="suffix">의 감정 티켓 발행 완료!</span>
       </div>
@@ -426,7 +443,7 @@
           img.style.position = "absolute";
           img.style.width = "300px";
           img.style.height = "330px";
-          img.style.left = "10px";
+          img.style.left = "11px";
           img.style.top = "90px";
           img.style.objectFit = "cover";
           img.style.zIndex = "10";
@@ -485,7 +502,7 @@
       html2canvas(document.querySelector('.page3-background')).then(canvas => {
         const cropX = 0;
         const cropY = 172;
-        const cropWidth = 432;
+        const cropWidth = 480;
         const cropHeight = 600;
         const croppedCanvas = document.createElement('canvas');
         croppedCanvas.width = cropWidth;
@@ -498,11 +515,11 @@
         link.click();
       });
     }
-    // scaleFrame 함수: 창 크기에 맞춰 .frame-wrapper 스케일 적용
+    // scaleFrame 함수: 기준 480x874에 맞춰 스케일 적용
     function scaleFrame() {
       var w = window.innerWidth;
       var h = window.innerHeight;
-      var scaleValue = Math.min(w / 432, h / 874);
+      var scaleValue = Math.min(w / 480, h / 874);
       var frameWrapper = document.querySelector('.frame-wrapper');
       frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
     }
