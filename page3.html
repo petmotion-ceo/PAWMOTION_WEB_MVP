@@ -52,10 +52,17 @@
       position: fixed;
       top: 50%;
       left: 50%;
+      /* 기본 scale은 1.0, 미디어 쿼리에서 자동 조정 */
       transform: translate(-50%, -50%) scale(1);
       transform-origin: center center;
       background: #FFFFFF;
       overflow: hidden;
+    }
+    /* 모바일 대응 미디어 쿼리 (page2와 동일) */
+    @media (max-width: 432px), (max-height: 874px) {
+      .frame-wrapper {
+        transform: translate(-50%, -50%) scale(calc(min(100vw / 432, 100vh / 874)));
+      }
     }
     .page3-background {
       width: 432px;
