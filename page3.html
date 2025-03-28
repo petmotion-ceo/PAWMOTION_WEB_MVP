@@ -307,8 +307,16 @@
 <body>
   <div class="frame-wrapper" id="page3">
     <div class="page3-background">
-      <img src="assets/pawmotion_3page_2.svg" alt="page3 background"
-           style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
+      <!-- 외부 SVG를 inline SVG로 교체 -->
+      <!-- 아래는 pawmotion_3page_2.svg 내용 예시 (적절히 수정하여 inline 가능) -->
+      <svg version="1.1" id="pawmotion_3page_2" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 432 600" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;">
+        <!-- 필요에 맞게 SVG 내부 요소를 복사/붙여넣기 -->
+        <rect x="0" y="0" width="432" height="600" fill="#ffffff" fill-opacity="0" />
+        <!-- 실제 그래픽 내용 -->
+        <circle cx="216" cy="300" r="120" fill="#F4F4F4" />
+        <!-- ... 다른 path, shape 등 -->
+      </svg>
+
       <div class="ticket-title">
         <span id="ticketChildName" class="child-name"></span><span class="suffix">의 감정 티켓 발행 완료!</span>
       </div>
@@ -327,7 +335,12 @@
         <div class="ticket-perpet">@PERPET</div>
         <textarea class="ticket-comment" id="ticketComment" placeholder="이곳에 오늘의 일기를 기록해보세요📝"></textarea>
         <div class="ticket-images" id="ticketImages">
-          <img src="assets/pawmotion_3page_3.svg" alt="grouped ticket image" />
+          <!-- pawmotion_3page_3.svg 역시 inline 가능, 혹은 data URL로 변환 -->
+          <svg version="1.1" id="pawmotion_3page_3" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 432 355" style="position:absolute; top:519px;">
+            <!-- 그래픽 내용 -->
+            <rect x="0" y="0" width="432" height="355" fill="#ffffff" fill-opacity="0" />
+            <!-- ... -->
+          </svg>
         </div>
         <div class="ticket-code" id="ticketCode"></div>
       </div>
@@ -502,10 +515,11 @@
     function saveAsImage() {
       const frameWrapper = document.querySelector(".frame-wrapper");
 
-      // 현재 scale 상태에 따라 출력 해상도가 달라지므로
-      // html2canvas에 {scale: window.devicePixelRatio} 옵션을 주면
-      // 화면에 보이는 대로 캡처됩니다.
-      html2canvas(frameWrapper, { scale: window.devicePixelRatio })
+      // SVG를 올바르게 그리기 위해 useCORS 옵션 추가
+      html2canvas(frameWrapper, {
+        scale: window.devicePixelRatio,
+        useCORS: true
+      })
         .then(canvas => {
           const link = document.createElement('a');
           link.download = 'ticket.png';
