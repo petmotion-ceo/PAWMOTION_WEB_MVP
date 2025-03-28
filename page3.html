@@ -498,24 +498,29 @@
       return `${part1}-${part2}-${part3}-${part4}`;
     }
 
-    // 이미지로 저장하기(전체 화면 캡처) 함수
+    // 이미지로 저장하기 (전체 화면 캡처) 함수 - 복제본을 이용해 CSS transform 없이 캡처
     function saveAsImage() {
-      const frameWrapper = document.querySelector(".frame-wrapper");
-
-      // 현재 scale 상태에 따라 출력 해상도가 달라지므로
-      // html2canvas에 {scale: window.devicePixelRatio} 옵션을 주면
-      // 화면에 보이는 대로 캡처됩니다.
-      html2canvas(frameWrapper, { scale: window.devicePixelRatio })
-        .then(canvas => {
-          const link = document.createElement('a');
-          link.download = 'ticket.png';
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        })
-        .catch(err => {
-          console.error("이미지 저장 오류:", err);
-          alert("이미지를 저장하는 중 오류가 발생했습니다.");
-        });
+      const original = document.querySelector('.frame-wrapper');
+      const rect = original.getBoundingClientRect();
+      const clone = original.cloneNode(true);
+      clone.style.transform = 'none';
+      clone.style.width = rect.width + 'px';
+      clone.style.height = rect.height + 'px';
+      clone.style.position = 'absolute';
+      clone.style.top = '-10000px';
+      document.body.appendChild(clone);
+  
+      html2canvas(clone, { scale: window.devicePixelRatio }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'ticket.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        document.body.removeChild(clone);
+      }).catch(err => {
+        console.error("이미지 저장 오류:", err);
+        alert("이미지를 저장하는 중 오류가 발생했습니다.");
+        document.body.removeChild(clone);
+      });
     }
 
     // 텍스트 박스(일기 입력 영역) 클릭 시 스크롤 가능하도록 이벤트 추가
