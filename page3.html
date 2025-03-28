@@ -40,6 +40,7 @@
       font-weight: 400;
       font-style: normal;
     }
+
     /* 기본 레이아웃: 스크롤 없고 중앙 고정 */
     html, body {
       margin: 0;
@@ -501,10 +502,6 @@
     // 이미지로 저장하기(전체 화면 캡처) 함수
     function saveAsImage() {
       const frameWrapper = document.querySelector(".frame-wrapper");
-
-      // 현재 scale 상태에 따라 출력 해상도가 달라지므로
-      // html2canvas에 {scale: window.devicePixelRatio} 옵션을 주면
-      // 화면에 보이는 대로 캡처됩니다.
       html2canvas(frameWrapper, { scale: window.devicePixelRatio })
         .then(canvas => {
           const link = document.createElement('a');
@@ -518,15 +515,20 @@
         });
     }
 
-    // 텍스트 박스(일기 입력 영역) 클릭 시 스크롤 가능하도록 이벤트 추가
+    // 페이지 로드 후 초기 설정
     window.addEventListener("load", function() {
       loadModel();
+
+      // 텍스트 박스 클릭 시 스크롤 허용, 포커스 해제 시 원래 상태 복귀
       const ticketComment = document.getElementById("ticketComment");
       ticketComment.addEventListener("focus", function() {
+        window.removeEventListener('resize', scaleFrame);
         document.body.style.overflow = "auto";
         ticketComment.scrollIntoView({ behavior: "smooth", block: "center" });
       });
       ticketComment.addEventListener("blur", function() {
+        window.addEventListener('resize', scaleFrame);
+        scaleFrame();
         document.body.style.overflow = "hidden";
       });
 
