@@ -5,6 +5,8 @@
   <!-- 모바일 디바이스에서 초기 스케일 고정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mobile Layout with Local Fonts - Page 3</title>
+  <!-- html2canvas 라이브러리 추가 -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <style>
     /* 폰트 정의 */
@@ -305,7 +307,8 @@
 <body>
   <div class="frame-wrapper" id="page3">
     <div class="page3-background">
-      <img src="assets/pawmotion_3page_2.svg" alt="page3 background" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
+      <img src="assets/pawmotion_3page_2.svg" alt="page3 background"
+           style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
       <div class="ticket-title">
         <span id="ticketChildName" class="child-name"></span><span class="suffix">의 감정 티켓 발행 완료!</span>
       </div>
@@ -495,6 +498,26 @@
       return `${part1}-${part2}-${part3}-${part4}`;
     }
 
+    // 이미지로 저장하기(전체 화면 캡처) 함수
+    function saveAsImage() {
+      const frameWrapper = document.querySelector(".frame-wrapper");
+
+      // 현재 scale 상태에 따라 출력 해상도가 달라지므로
+      // html2canvas에 {scale: window.devicePixelRatio} 옵션을 주면
+      // 화면에 보이는 대로 캡처됩니다.
+      html2canvas(frameWrapper, { scale: window.devicePixelRatio })
+        .then(canvas => {
+          const link = document.createElement('a');
+          link.download = 'ticket.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        })
+        .catch(err => {
+          console.error("이미지 저장 오류:", err);
+          alert("이미지를 저장하는 중 오류가 발생했습니다.");
+        });
+    }
+
     // 텍스트 박스(일기 입력 영역) 클릭 시 스크롤 가능하도록 이벤트 추가
     window.addEventListener("load", function() {
       loadModel();
@@ -506,6 +529,10 @@
       ticketComment.addEventListener("blur", function() {
         document.body.style.overflow = "hidden";
       });
+
+      // saveBtn 클릭 시 이미지 저장 함수 호출
+      const saveBtn = document.getElementById("saveBtn");
+      saveBtn.addEventListener("click", saveAsImage);
     });
   </script>
 </body>
