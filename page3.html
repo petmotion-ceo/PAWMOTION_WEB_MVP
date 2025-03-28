@@ -41,83 +41,43 @@
       font-style: normal;
     }
 
-    /* 기본 레이아웃 설정: 전체 폭을 차지하고, 세로 스크롤 가능 */
+    /* 전체 배경을 회색으로 설정 */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      background: #FFFFFF;
-      overflow: hidden; /* 텍스트박스 포커스 시에는 JS에서 auto로 변경 */
+      background: #F4F4F4;
+      overflow: hidden;
       box-sizing: border-box;
     }
-
-    /*
-      frame-wrapper를 화면 가로 너비에 맞춰 100%로 확장
-      높이는 원하는 고정 크기(820px)로 지정 (필요 시 auto, min-height 등으로 조정 가능)
-    */
+    /* 874 → 820으로 줄임 */
     .frame-wrapper {
-      width: 100%;
+      width: 432px;
       height: 820px;
       background: #FFFFFF;
-      position: relative;
-      margin: 0 auto;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      transform-origin: center center;
       overflow: hidden;
     }
-
+    /* 내부 페이지3 스타일 */
     .page3-background {
-      width: 100%;  /* 가로로 꽉 차게 */
-      height: 820px; 
+      width: 432px;
+      /* 높이도 874 → 820으로 변경 */
+      height: 820px;
       background: #F4F4F4;
       position: absolute;
       left: 0;
       top: 0;
       overflow: hidden;
     }
-
-    .top-bar {
-      width: 100%;  /* 가로로 꽉 차게 */
-      height: 48px;
-      position: absolute;
-      left: 0;
-      top: 0;
-      background: #FAFAFA;
-    }
-    .back-btn {
-      width: 24px;
-      height: 24px;
-      position: absolute;
-      left: 40px;
-      top: 12px;
-      cursor: pointer;
-    }
-    .emojis {
-      position: absolute;
-      left: 50%;
-      top: 7px;
-      transform: translateX(-50%);
-      color: white;
-      font-size: 21px;
-      font-family: Pretendard;
-      font-weight: 500;
-      line-height: 35px;
-    }
-
-    /* 배경 이미지(가로 100%) */
-    img[alt="page3 background"] {
-      position: absolute; 
-      top: 118px; 
-      left: 50%; 
-      transform: translateX(-50%);
-      width: 100%;  /* 가로로 꽉 차게 */
-      height: 600px; 
-      z-index: 0;
-      object-fit: cover; /* 비율이 달라질 경우 필요에 따라 조정 */
-    }
-
     .ticket-title {
       position: absolute;
       left: 22px;
+      /* 126 → 72 (126 - 54) */
       top: 72px;
     }
     .ticket-title .child-name {
@@ -134,12 +94,12 @@
       font-weight: 500;
       line-height: 28px;
     }
-
     .save-btn {
       position: absolute;
       width: 287px;
       height: 48px;
       left: 72px;
+      /* 779 → 725 (779 - 54) */
       top: 725px;
       background: #208FFF;
       border-radius: 4px;
@@ -155,21 +115,13 @@
       font-weight: 500;
       line-height: 18.75px;
     }
-
     .ticket-container {
       width: 320px;
       height: 584.94px;
       position: absolute;
       left: 56px;
+      /* 178 → 124 (178 - 54) */
       top: 124px;
-    }
-    .ticket-top {
-      width: 320px;
-      height: 490.83px;
-      position: absolute;
-      left: 0;
-      top: 0;
-      background: transparent;
     }
     .ticket-bottom {
       width: 320px;
@@ -177,6 +129,14 @@
       position: absolute;
       left: 0;
       top: 491px;
+      background: transparent;
+    }
+    .ticket-top {
+      width: 320px;
+      height: 490.83px;
+      position: absolute;
+      left: 0;
+      top: 0;
       background: transparent;
     }
     .ticket-comment {
@@ -228,12 +188,12 @@
       font-weight: 500;
       line-height: 24px;
     }
-    .ticket-images {
-      display: none;
-    }
     .ticket-images img {
       position: absolute;
       top: 519px;
+    }
+    .ticket-images {
+      display: none;
     }
     .ticket-code {
       position: absolute;
@@ -256,7 +216,34 @@
       font-weight: 400;
       line-height: 24px;
     }
-
+    .top-bar {
+      width: 432px;
+      height: 48px;
+      position: absolute;
+      left: 0;
+      /* top:54px -> 0으로 변경 */
+      top: 0;
+      background: #FAFAFA;
+    }
+    .back-btn {
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      left: 40px;
+      top: 12px;
+      cursor: pointer;
+    }
+    .emojis {
+      position: absolute;
+      left: 50%;
+      top: 7px;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 21px;
+      font-family: Pretendard;
+      font-weight: 500;
+      line-height: 35px;
+    }
     .add-image-btn {
       position: absolute;
       width: 300px;
@@ -282,6 +269,7 @@
       width: 287px;
       height: 48px;
       left: 72px;
+      /* 709 → 655 (709 - 54) */
       top: 655px;
       background: #208FFF;
       border-radius: 12px;
@@ -321,6 +309,17 @@
     @keyframes fillGradient {
       0% { width: 0; }
       100% { width: 100%; }
+    }
+
+    /* 이미지 배경 위치도 172→118로 변경 */
+    img[alt="page3 background"] {
+      position: absolute; 
+      top: 118px; 
+      left: 50%; 
+      transform: translateX(-50%);
+      width: 432px; 
+      height: 600px; 
+      z-index: 0;
     }
   </style>
 </head>
@@ -363,6 +362,17 @@
   </div>
 
   <script>
+    // 화면 크기에 따라 .frame-wrapper scale 적용
+    function scaleFrame() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      var scaleValue = Math.min(w / 432, h / 820); // 높이 820으로 변경
+      var frameWrapper = document.querySelector('.frame-wrapper');
+      frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
+    }
+    window.addEventListener('load', scaleFrame);
+    window.addEventListener('resize', scaleFrame);
+
     // URL 파라미터에서 데이터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const childName = urlParams.get('childName') || "이름 없음";
@@ -370,8 +380,7 @@
 
     // 현재 날짜 삽입 (YYYY.MM.DD 형식)
     const today = new Date();
-    const formattedDate = 
-      `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+    const formattedDate = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
     document.getElementById("currentDate").textContent = formattedDate;
 
     // 상태 변수
@@ -525,16 +534,18 @@
 
     // 페이지 로드 후 초기 설정
     window.addEventListener("load", function() {
-      // 모델 로드
       loadModel();
 
       // 텍스트 박스 클릭 시 스크롤 허용, 포커스 해제 시 원래 상태 복귀
       const ticketComment = document.getElementById("ticketComment");
       ticketComment.addEventListener("focus", function() {
+        window.removeEventListener('resize', scaleFrame);
         document.body.style.overflow = "auto";
         ticketComment.scrollIntoView({ behavior: "smooth", block: "center" });
       });
       ticketComment.addEventListener("blur", function() {
+        window.addEventListener('resize', scaleFrame);
+        scaleFrame();
         document.body.style.overflow = "hidden";
       });
 
