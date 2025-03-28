@@ -2,12 +2,14 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <!-- 모바일 디바이스에서 초기 스케일 고정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mobile Layout with Local Fonts - Page 3</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <!-- html2canvas 라이브러리 추가 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <style>
+    /* 폰트 정의 */
     @font-face {
       font-family: 'GmarketSans';
       src: url('fonts/GmarketSansTTFMedium.ttf') format('truetype');
@@ -38,6 +40,7 @@
       font-weight: 400;
       font-style: normal;
     }
+    /* 기본 레이아웃: 스크롤 없고 중앙 고정 */
     html, body {
       margin: 0;
       padding: 0;
@@ -45,25 +48,20 @@
       height: 100%;
       background: #FFFFFF;
       overflow: hidden;
+      box-sizing: border-box;
     }
     .frame-wrapper {
       width: 432px;
       height: 874px;
+      background: #FFFFFF;
       position: fixed;
       top: 50%;
       left: 50%;
-      /* 기본 scale은 1.0, 미디어 쿼리에서 자동 조정 */
       transform: translate(-50%, -50%) scale(1);
       transform-origin: center center;
-      background: #FFFFFF;
       overflow: hidden;
     }
-    /* 모바일 대응 미디어 쿼리 (page2와 동일) */
-    @media (max-width: 432px), (max-height: 874px) {
-      .frame-wrapper {
-        transform: translate(-50%, -50%) scale(calc(min(100vw / 432, 100vh / 874)));
-      }
-    }
+    /* 내부 페이지3 스타일 */
     .page3-background {
       width: 432px;
       height: 874px;
@@ -96,7 +94,7 @@
       position: absolute;
       width: 287px;
       height: 48px;
-      left: 57px;
+      left: 72px;
       top: 779px;
       background: #208FFF;
       border-radius: 4px;
@@ -116,7 +114,7 @@
       width: 320px;
       height: 584.94px;
       position: absolute;
-      left: 41px;
+      left: 56px;
       top: 178px;
     }
     .ticket-bottom {
@@ -263,7 +261,7 @@
       position: absolute;
       width: 287px;
       height: 48px;
-      left: 57px;
+      left: 72px;
       top: 709px;
       background: #208FFF;
       border-radius: 12px;
@@ -309,11 +307,12 @@
 <body>
   <div class="frame-wrapper" id="page3">
     <div class="page3-background">
-      <img id="backgroundImage" src="assets/pawmotion_3page_2.svg" alt="page3 background" style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
+      <img src="assets/pawmotion_3page_2.svg" alt="page3 background"
+           style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
       <div class="ticket-title">
         <span id="ticketChildName" class="child-name"></span><span class="suffix">의 감정 티켓 발행 완료!</span>
       </div>
-      <div class="save-btn" id="saveBtn" onclick="saveAsImage()">
+      <div class="save-btn" id="saveBtn">
         <div class="save-btn-text">이미지로 저장하기</div>
       </div>
       <div class="ticket-container">
@@ -345,19 +344,33 @@
   </div>
 
   <script>
+    // 화면 크기에 따라 .frame-wrapper scale 적용
+    function scaleFrame() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      var scaleValue = Math.min(w / 432, h / 874);
+      var frameWrapper = document.querySelector('.frame-wrapper');
+      frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
+    }
+    window.addEventListener('load', scaleFrame);
+    window.addEventListener('resize', scaleFrame);
+
     // URL 파라미터에서 데이터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const childName = urlParams.get('childName') || "이름 없음";
     document.getElementById("ticketChildName").textContent = childName;
+
     // 현재 날짜 삽입 (YYYY.MM.DD 형식)
     const today = new Date();
     const formattedDate = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
     document.getElementById("currentDate").textContent = formattedDate;
+
     // 상태 변수
     let isImageUploaded = false;
     let uploadedImage = null;
     let model = null;
     let isModelLoaded = false;
+
     // 감정 매핑
     const emotionMapping = {
       0: { text: "😣 ANGRY", class: "angry" },
@@ -365,6 +378,7 @@
       2: { text: "😊 RELAXED", class: "relaxed" },
       3: { text: "😄 HAPPY", class: "happy" }
     };
+
     // 모델 로드 함수
     async function loadModel() {
       try {
@@ -377,7 +391,8 @@
         alert("모델을 로드하는 데 실패했습니다. 페이지를 새로고침해 주세요.");
       }
     }
-    // 분석 버튼 상태 업데이트
+
+    // 분석 버튼 상태 확인 및 업데이트
     function checkAnalyzeButtonState() {
       const analyzeBtn = document.getElementById("analyzeBtn");
       if (isImageUploaded && isModelLoaded) {
@@ -386,19 +401,7 @@
         analyzeBtn.classList.remove("active");
       }
     }
-    // 페이지 로드 시 모델 로드 및 스케일 적용
-    window.onload = function() {
-      loadModel();
-      scaleFrame();
-    };
-    // 랜덤 코드 생성 함수
-    function generateRandomCode() {
-      const part1 = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
-      const part2 = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-      const part3 = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-      const part4 = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
-      return `${part1}-${part2}-${part3}-${part4}`;
-    }
+
     // 이미지 전처리 함수
     async function preprocessImage(imageElement) {
       let tensor = tf.browser.fromPixels(imageElement);
@@ -414,6 +417,7 @@
       tensor = tensor.expandDims(0);
       return tensor;
     }
+
     // 이미지 업로드 함수
     function addImage(event) {
       const file = event.target.files[0];
@@ -439,10 +443,12 @@
         reader.readAsDataURL(file);
       }
     }
+
     // 감정 분석 함수
     async function analyzeEmotion() {
       const analyzeBtn = document.getElementById("analyzeBtn");
       const analyzeBtnText = document.getElementById("analyzeBtnText");
+
       if (!isImageUploaded) {
         alert("먼저 이미지를 업로드해 주세요.");
         return;
@@ -451,9 +457,11 @@
         alert("모델이 아직 로드 중입니다. 잠시 기다려주세요.");
         return;
       }
+
       analyzeBtn.classList.add("loading");
       analyzeBtn.style.pointerEvents = "none";
       analyzeBtnText.textContent = "분석 중...";
+
       try {
         const processedImage = await preprocessImage(uploadedImage);
         const prediction = model.predict(processedImage);
@@ -480,33 +488,52 @@
         }, 2000);
       }
     }
-    // saveAsImage 함수: .page3-background 영역에서 y=172, 높이600px 크기로 캡쳐 후 다운로드
+
+    // 랜덤 코드 생성 함수
+    function generateRandomCode() {
+      const part1 = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
+      const part2 = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+      const part3 = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+      const part4 = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
+      return `${part1}-${part2}-${part3}-${part4}`;
+    }
+
+    // 이미지로 저장하기(전체 화면 캡처) 함수
     function saveAsImage() {
-      html2canvas(document.querySelector('.page3-background')).then(canvas => {
-        const cropX = 0;
-        const cropY = 172;
-        const cropWidth = 432;
-        const cropHeight = 600;
-        const croppedCanvas = document.createElement('canvas');
-        croppedCanvas.width = cropWidth;
-        croppedCanvas.height = cropHeight;
-        const ctx = croppedCanvas.getContext('2d');
-        ctx.drawImage(canvas, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-        const link = document.createElement('a');
-        link.download = 'ticket.png';
-        link.href = croppedCanvas.toDataURL('image/png');
-        link.click();
+      const frameWrapper = document.querySelector(".frame-wrapper");
+
+      // 현재 scale 상태에 따라 출력 해상도가 달라지므로
+      // html2canvas에 {scale: window.devicePixelRatio} 옵션을 주면
+      // 화면에 보이는 대로 캡처됩니다.
+      html2canvas(frameWrapper, { scale: window.devicePixelRatio })
+        .then(canvas => {
+          const link = document.createElement('a');
+          link.download = 'ticket.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        })
+        .catch(err => {
+          console.error("이미지 저장 오류:", err);
+          alert("이미지를 저장하는 중 오류가 발생했습니다.");
+        });
+    }
+
+    // 텍스트 박스(일기 입력 영역) 클릭 시 스크롤 가능하도록 이벤트 추가
+    window.addEventListener("load", function() {
+      loadModel();
+      const ticketComment = document.getElementById("ticketComment");
+      ticketComment.addEventListener("focus", function() {
+        document.body.style.overflow = "auto";
+        ticketComment.scrollIntoView({ behavior: "smooth", block: "center" });
       });
-    }
-    // scaleFrame 함수: 창 크기에 맞춰 .frame-wrapper 스케일 적용
-    function scaleFrame() {
-      var w = window.innerWidth;
-      var h = window.innerHeight;
-      var scaleValue = Math.min(w / 432, h / 874);
-      var frameWrapper = document.querySelector('.frame-wrapper');
-      frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
-    }
-    window.addEventListener('resize', scaleFrame);
+      ticketComment.addEventListener("blur", function() {
+        document.body.style.overflow = "hidden";
+      });
+
+      // saveBtn 클릭 시 이미지 저장 함수 호출
+      const saveBtn = document.getElementById("saveBtn");
+      saveBtn.addEventListener("click", saveAsImage);
+    });
   </script>
 </body>
 </html>
