@@ -362,7 +362,7 @@
 
     // 현재 날짜 삽입 (YYYY.MM.DD 형식)
     const today = new Date();
-    const formattedDate = ${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')};
+    const formattedDate = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
     document.getElementById("currentDate").textContent = formattedDate;
 
     // 상태 변수
@@ -495,7 +495,7 @@
       const part2 = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
       const part3 = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
       const part4 = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
-      return ${part1}-${part2}-${part3}-${part4};
+      return `${part1}-${part2}-${part3}-${part4}`;
     }
 
     // 이미지로 저장하기(전체 화면 캡처) 함수
