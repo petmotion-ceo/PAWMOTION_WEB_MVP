@@ -107,11 +107,11 @@
       line-height: 18.75px;
     }
     .ticket-container {
-      width: 432px;
-      height: 820px;
+      width: 320px;
+      height: 584.94px;
       position: absolute;
-      left: 0px;
-      top: 0px;
+      left: 56px;
+      top: 124px;
     }
     .ticket-bottom {
       width: 320px;
@@ -133,8 +133,8 @@
       width: 265px;
       height: 60px;
       position: absolute;
-      left: 86px;
-      top: 550px;
+      left: 30px;
+      top: 426px;
       color: black;
       font-size: 16px;
       font-family: '나눔손글씨 꽃내음';
@@ -152,8 +152,8 @@
     }
     .ticket-perpet {
       position: absolute;
-      left: 300px;
-      top: 522px;
+      left: 244px;
+      top: 398px;
       color: black;
       font-size: 12px;
       font-family: Pretendard;
@@ -164,8 +164,8 @@
       width: 320px;
       height: 36px;
       position: absolute;
-      left: 56px;
-      top: 169px;
+      left: 0;
+      top: 45px;
       background: #DEEFFF;
       display: flex;
       justify-content: center;
@@ -180,16 +180,15 @@
     }
     .ticket-images img {
       position: absolute;
-      top: 643px;
-      left: 56px;
+      top: 519px;
     }
     .ticket-images {
       display: none;
     }
     .ticket-code {
       position: absolute;
-      left: 120px;
-      top: 675px;
+      left: 64px;
+      top: 551px;
       color: black;
       font-size: 12px;
       font-family: Pretendard;
@@ -199,8 +198,8 @@
     }
     .ticket-date {
       position: absolute;
-      left: 72px;
-      top: 135px;
+      left: 16px;
+      top: 11px;
       color: black;
       font-size: 20px;
       font-family: '나눔손글씨 꽃내음';
@@ -238,8 +237,8 @@
       position: absolute;
       width: 300px;
       height: 330px;
-      left: 66px;
-      top: 214px;
+      left: 10px;
+      top: 90px;
       background: #D9D9D9;
       border-radius: 4px;
       display: flex;
@@ -300,12 +299,12 @@
       100% { width: 100%; }
     }
     img[alt="page3 background"] {
-      position: absolute;
-      top: 118px;
-      left: 50%;
+      position: absolute; 
+      top: 118px; 
+      left: 50%; 
       transform: translateX(-50%);
-      width: 432px;
-      height: 600px;
+      width: 432px; 
+      height: 600px; 
       z-index: 0;
     }
   </style>
@@ -355,7 +354,6 @@
       var scaleValue = Math.min(w / 432, h / 820);
       var frameWrapper = document.querySelector('.frame-wrapper');
       frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
-      return scaleValue;
     }
     window.addEventListener('load', scaleFrame);
     window.addEventListener('resize', scaleFrame);
@@ -427,8 +425,8 @@
           img.style.position = "absolute";
           img.style.width = "300px";
           img.style.height = "330px";
-          img.style.left = "66px";
-          img.style.top = "214px";
+          img.style.left = "10px";
+          img.style.top = "90px";
           img.style.objectFit = "cover";
           img.style.zIndex = "10";
           const ticketContainer = document.querySelector(".ticket-container");
@@ -494,58 +492,74 @@
     }
 
     function saveAsImage() {
-      // 제외할 요소들 숨기기
-      document.querySelector('.ticket-title').style.display = 'none';
-      document.querySelector('.save-btn').style.display = 'none';
-      document.querySelector('.analyze-btn').style.display = 'none';
-      document.querySelector('.top-bar').style.display = 'none';
-      document.querySelector('.add-image-btn').style.display = 'none';
+      console.log("saveAsImage 함수 호출됨"); // 디버깅 로그
 
       const frameWrapper = document.querySelector('.frame-wrapper');
-      const scaleValue = scaleFrame(); // 현재 스케일 값 가져오기
-      const width = 432; // 원래 너비
-      const height = 820; // 원래 높이
+      const ticketTitle = document.querySelector('.ticket-title');
+      const saveBtn = document.querySelector('.save-btn');
+      const analyzeBtn = document.querySelector('.analyze-btn');
+      const topBar = document.querySelector('.top-bar');
+      const addImageBtn = document.querySelector('.add-image-btn');
 
-      // 뷰포트에 맞춘 실제 크기 계산
-      const scaledWidth = width * scaleValue;
-      const scaledHeight = height * scaleValue;
+      // 원래 스타일 저장
+      const originalStyles = {
+        ticketTitle: ticketTitle.style.display,
+        saveBtn: saveBtn.style.display,
+        analyzeBtn: analyzeBtn.style.display,
+        topBar: topBar.style.display,
+        addImageBtn: addImageBtn.style.display,
+        transform: frameWrapper.style.transform,
+        left: frameWrapper.style.left,
+        top: frameWrapper.style.top
+      };
 
-      // 캡처 옵션 설정
+      // 제외할 요소 숨기기
+      ticketTitle.style.display = 'none';
+      saveBtn.style.display = 'none';
+      analyzeBtn.style.display = 'none';
+      topBar.style.display = 'none';
+      addImageBtn.style.display = 'none';
+
+      // 스케일링 제거 및 원래 크기로 설정
+      frameWrapper.style.transform = 'none';
+      frameWrapper.style.left = '0';
+      frameWrapper.style.top = '0';
+
       html2canvas(frameWrapper, {
-        width: width, // 요소의 원래 크기
-        height: height,
-        scale: scaleValue * window.devicePixelRatio, // 스케일링과 디바이스 해상도 반영
-        useCORS: true, // 외부 이미지 로드 허용
-        logging: true // 디버깅용 로그
+        width: 432,
+        height: 820,
+        scale: 2, // 고해상도 캡처
+        useCORS: true, // 외부 이미지 로드 시 필요
+        logging: true // 디버깅용 로그 활성화
       }).then(canvas => {
-        // 요소들 복원
-        document.querySelector('.ticket-title').style.display = 'block';
-        document.querySelector('.save-btn').style.display = 'flex';
-        document.querySelector('.analyze-btn').style.display = 'none';
-        document.querySelector('.top-bar').style.display = 'block';
-        document.querySelector('.add-image-btn').style.display = 'flex';
+        // 스타일 복원
+        ticketTitle.style.display = originalStyles.ticketTitle;
+        saveBtn.style.display = originalStyles.saveBtn;
+        analyzeBtn.style.display = originalStyles.analyzeBtn;
+        topBar.style.display = originalStyles.topBar;
+        addImageBtn.style.display = originalStyles.addImageBtn;
+        frameWrapper.style.transform = originalStyles.transform;
+        frameWrapper.style.left = originalStyles.left;
+        frameWrapper.style.top = originalStyles.top;
 
-        // 캔버스 크기 조정 (화면에 보이는 크기로)
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = scaledWidth * window.devicePixelRatio;
-        tempCanvas.height = scaledHeight * window.devicePixelRatio;
-        const ctx = tempCanvas.getContext('2d');
-        ctx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
-
-        // 이미지 저장
+        // 이미지 다운로드
         const link = document.createElement('a');
         link.download = 'ticket.png';
-        link.href = tempCanvas.toDataURL('image/png');
+        link.href = canvas.toDataURL('image/png');
         link.click();
+        console.log("이미지 저장 완료");
       }).catch(err => {
-        console.error("이미지 저장 오류:", err);
-        alert("이미지를 저장하는 중 오류가 발생했습니다.");
-        // 오류 발생 시 요소 복원
-        document.querySelector('.ticket-title').style.display = 'block';
-        document.querySelector('.save-btn').style.display = 'flex';
-        document.querySelector('.analyze-btn').style.display = 'none';
-        document.querySelector('.top-bar').style.display = 'block';
-        document.querySelector('.add-image-btn').style.display = 'flex';
+        console.error("html2canvas 오류:", err);
+        // 오류 발생 시 스타일 복원
+        ticketTitle.style.display = originalStyles.ticketTitle;
+        saveBtn.style.display = originalStyles.saveBtn;
+        analyzeBtn.style.display = originalStyles.analyzeBtn;
+        topBar.style.display = originalStyles.topBar;
+        addImageBtn.style.display = originalStyles.addImageBtn;
+        frameWrapper.style.transform = originalStyles.transform;
+        frameWrapper.style.left = originalStyles.left;
+        frameWrapper.style.top = originalStyles.top;
+        alert("이미지 저장 중 오류가 발생했습니다. 콘솔을 확인해주세요.");
       });
     }
 
@@ -564,8 +578,16 @@
         document.body.style.overflow = "hidden";
       });
 
+      // saveBtn 이벤트 리스너 연결
       const saveBtn = document.getElementById("saveBtn");
-      saveBtn.addEventListener("click", saveAsImage);
+      if (saveBtn) {
+        saveBtn.addEventListener("click", function() {
+          console.log("이미지로 저장하기 버튼 클릭됨"); // 디버깅 로그
+          saveAsImage();
+        });
+      } else {
+        console.error("saveBtn 요소를 찾을 수 없습니다.");
+      }
     });
   </script>
 </body>
