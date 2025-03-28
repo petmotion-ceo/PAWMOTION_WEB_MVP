@@ -51,9 +51,10 @@
       overflow: hidden;
       box-sizing: border-box;
     }
+    /* 874 → 820으로 줄임 */
     .frame-wrapper {
       width: 432px;
-      height: 874px;
+      height: 820px;
       background: #FFFFFF;
       position: fixed;
       top: 50%;
@@ -65,7 +66,8 @@
     /* 내부 페이지3 스타일 */
     .page3-background {
       width: 432px;
-      height: 874px;
+      /* 높이도 874 → 820으로 변경 */
+      height: 820px;
       background: #F4F4F4;
       position: absolute;
       left: 0;
@@ -75,7 +77,8 @@
     .ticket-title {
       position: absolute;
       left: 22px;
-      top: 126px;
+      /* 126 → 72 (126 - 54) */
+      top: 72px;
     }
     .ticket-title .child-name {
       color: black;
@@ -96,7 +99,8 @@
       width: 287px;
       height: 48px;
       left: 72px;
-      top: 779px;
+      /* 779 → 725 (779 - 54) */
+      top: 725px;
       background: #208FFF;
       border-radius: 4px;
       display: none;
@@ -116,7 +120,8 @@
       height: 584.94px;
       position: absolute;
       left: 56px;
-      top: 178px;
+      /* 178 → 124 (178 - 54) */
+      top: 124px;
     }
     .ticket-bottom {
       width: 320px;
@@ -216,7 +221,8 @@
       height: 48px;
       position: absolute;
       left: 0;
-      top: 54px;
+      /* top:54px -> 0으로 변경 */
+      top: 0;
       background: #FAFAFA;
     }
     .back-btn {
@@ -263,7 +269,8 @@
       width: 287px;
       height: 48px;
       left: 72px;
-      top: 709px;
+      /* 709 → 655 (709 - 54) */
+      top: 655px;
       background: #208FFF;
       border-radius: 12px;
       display: flex;
@@ -303,13 +310,23 @@
       0% { width: 0; }
       100% { width: 100%; }
     }
+
+    /* 이미지 배경 위치도 172→118로 변경 */
+    img[alt="page3 background"] {
+      position: absolute; 
+      top: 118px; 
+      left: 50%; 
+      transform: translateX(-50%);
+      width: 432px; 
+      height: 600px; 
+      z-index: 0;
+    }
   </style>
 </head>
 <body>
   <div class="frame-wrapper" id="page3">
     <div class="page3-background">
-      <img src="assets/pawmotion_3page_2.svg" alt="page3 background"
-           style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
+      <img src="assets/pawmotion_3page_2.svg" alt="page3 background" />
       <div class="ticket-title">
         <span id="ticketChildName" class="child-name"></span><span class="suffix">의 감정 티켓 발행 완료!</span>
       </div>
@@ -349,7 +366,7 @@
     function scaleFrame() {
       var w = window.innerWidth;
       var h = window.innerHeight;
-      var scaleValue = Math.min(w / 432, h / 874);
+      var scaleValue = Math.min(w / 432, h / 820); // 높이 820으로 변경
       var frameWrapper = document.querySelector('.frame-wrapper');
       frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
     }
