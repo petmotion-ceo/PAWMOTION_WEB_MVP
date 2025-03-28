@@ -272,7 +272,7 @@
       opacity: 0.5;
       pointer-events: none;
       overflow: hidden;
-      position: relative;
+      position: static;
     }
     .analyze-btn.active {
       opacity: 1;
@@ -498,7 +498,7 @@
       return `${part1}-${part2}-${part3}-${part4}`;
     }
 
-    // 이미지로 저장하기 함수 (수정됨)
+    // 이미지로 저장하기 함수 (수정됨: 상단 제외)
     function saveAsImage() {
       const frameWrapper = document.querySelector(".frame-wrapper");
 
@@ -516,8 +516,16 @@
       frameWrapper.style.left = "0";         // 위치 초기화
       frameWrapper.style.top = "0";          // 위치 초기화
 
+      // 상단 178px 제외하고 캡처 (ticket-container 시작점부터)
+      const captureY = 178; // .ticket-container의 top 값
+      const captureHeight = 874 - captureY; // 전체 높이에서 상단 제외
+
       // html2canvas로 캡처
-      html2canvas(frameWrapper, { scale: 2 }) // 해상도 향상을 위해 scale: 2 사용
+      html2canvas(frameWrapper, {
+        scale: 2,           // 해상도 향상
+        y: captureY,        // 캡처 시작 y 좌표
+        height: captureHeight // 캡처할 높이
+      })
         .then(canvas => {
           const link = document.createElement('a');
           link.download = 'ticket.png';
