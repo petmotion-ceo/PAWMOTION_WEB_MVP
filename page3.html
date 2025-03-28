@@ -516,11 +516,27 @@
       return `${part1}-${part2}-${part3}-${part4}`;
     }
 
-    // 이미지로 저장하기(전체 화면 캡처) 함수
+    // 이미지로 저장하기 함수 (수정됨)
     function saveAsImage() {
-      const frameWrapper = document.querySelector(".frame-wrapper");
+      // 캡처에서 제외할 요소들 숨기기
+      document.querySelector('.ticket-title').style.display = 'none';
+      document.querySelector('.save-btn').style.display = 'none';
+      document.querySelector('.analyze-btn').style.display = 'none';
+      document.querySelector('.top-bar').style.display = 'none';
+      document.querySelector('.add-image-btn').style.display = 'none';
+
+      // frame-wrapper 캡처
+      const frameWrapper = document.querySelector('.frame-wrapper');
       html2canvas(frameWrapper, { scale: window.devicePixelRatio })
         .then(canvas => {
+          // 요소들 복원
+          document.querySelector('.ticket-title').style.display = 'block';
+          document.querySelector('.save-btn').style.display = 'flex';
+          document.querySelector('.analyze-btn').style.display = 'none'; // 분석 후 숨김 상태 유지
+          document.querySelector('.top-bar').style.display = 'block';
+          document.querySelector('.add-image-btn').style.display = 'flex';
+
+          // 이미지 저장
           const link = document.createElement('a');
           link.download = 'ticket.png';
           link.href = canvas.toDataURL('image/png');
@@ -529,6 +545,12 @@
         .catch(err => {
           console.error("이미지 저장 오류:", err);
           alert("이미지를 저장하는 중 오류가 발생했습니다.");
+          // 오류 발생 시에도 요소들 복원
+          document.querySelector('.ticket-title').style.display = 'block';
+          document.querySelector('.save-btn').style.display = 'flex';
+          document.querySelector('.analyze-btn').style.display = 'none';
+          document.querySelector('.top-bar').style.display = 'block';
+          document.querySelector('.add-image-btn').style.display = 'flex';
         });
     }
 
