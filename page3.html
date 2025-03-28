@@ -498,29 +498,50 @@
       return `${part1}-${part2}-${part3}-${part4}`;
     }
 
-    // 이미지로 저장하기 (전체 화면 캡처) 함수 - 복제본을 이용해 CSS transform 없이 캡처
+    // 이미지로 저장하기 함수 (수정됨)
     function saveAsImage() {
-      const original = document.querySelector('.frame-wrapper');
-      const rect = original.getBoundingClientRect();
-      const clone = original.cloneNode(true);
-      clone.style.transform = 'none';
-      clone.style.width = rect.width + 'px';
-      clone.style.height = rect.height + 'px';
-      clone.style.position = 'absolute';
-      clone.style.top = '-10000px';
-      document.body.appendChild(clone);
-  
-      html2canvas(clone, { scale: window.devicePixelRatio }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'ticket.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        document.body.removeChild(clone);
-      }).catch(err => {
-        console.error("이미지 저장 오류:", err);
-        alert("이미지를 저장하는 중 오류가 발생했습니다.");
-        document.body.removeChild(clone);
-      });
+      const frameWrapper = document.querySelector(".frame-wrapper");
+
+      // 원래 스타일 저장
+      const originalTransform = frameWrapper.style.transform;
+      const originalWidth = frameWrapper.style.width;
+      const originalHeight = frameWrapper.style.height;
+      const originalLeft = frameWrapper.style.left;
+      const originalTop = frameWrapper.style.top;
+
+      // 캡처를 위해 스타일 조정
+      frameWrapper.style.transform = "none"; // transform 제거
+      frameWrapper.style.width = "432px";    // 원본 너비
+      frameWrapper.style.height = "874px";   // 원본 높이
+      frameWrapper.style.left = "0";         // 위치 초기화
+      frameWrapper.style.top = "0";          // 위치 초기화
+
+      // html2canvas로 캡처
+      html2canvas(frameWrapper, { scale: 2 }) // 해상도 향상을 위해 scale: 2 사용
+        .then(canvas => {
+          const link = document.createElement('a');
+          link.download = 'ticket.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+
+          // 캡처 후 원래 스타일 복원
+          frameWrapper.style.transform = originalTransform;
+          frameWrapper.style.width = originalWidth;
+          frameWrapper.style.height = originalHeight;
+          frameWrapper.style.left = originalLeft;
+          frameWrapper.style.top = originalTop;
+        })
+        .catch(err => {
+          console.error("이미지 저장 오류:", err);
+          alert("이미지를 저장하는 중 오류가 발생했습니다.");
+
+          // 오류 발생 시에도 원래 스타일 복원
+          frameWrapper.style.transform = originalTransform;
+          frameWrapper.style.width = originalWidth;
+          frameWrapper.style.height = originalHeight;
+          frameWrapper.style.left = originalLeft;
+          frameWrapper.style.top = originalTop;
+        });
     }
 
     // 텍스트 박스(일기 입력 영역) 클릭 시 스크롤 가능하도록 이벤트 추가
