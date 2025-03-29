@@ -2,14 +2,11 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <!-- 모바일 디바이스에서 초기 스케일 고정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mobile Layout with Local Fonts - Page 3</title>
-  <!-- html2canvas 라이브러리 추가 -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <style>
-    /* 폰트 정의 */
     @font-face {
       font-family: 'GmarketSans';
       src: url('fonts/GmarketSansTTFMedium.ttf') format('truetype');
@@ -40,19 +37,19 @@
       font-weight: 400;
       font-style: normal;
     }
-    /* 기본 레이아웃: 스크롤 없고 중앙 고정 */
+
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      background: #FFFFFF;
+      background: #F4F4F4;
       overflow: hidden;
       box-sizing: border-box;
     }
     .frame-wrapper {
       width: 432px;
-      height: 874px;
+      height: 820px;
       background: #FFFFFF;
       position: fixed;
       top: 50%;
@@ -61,10 +58,9 @@
       transform-origin: center center;
       overflow: hidden;
     }
-    /* 내부 페이지3 스타일 */
     .page3-background {
       width: 432px;
-      height: 874px;
+      height: 820px;
       background: #F4F4F4;
       position: absolute;
       left: 0;
@@ -74,7 +70,7 @@
     .ticket-title {
       position: absolute;
       left: 22px;
-      top: 126px;
+      top: 72px;
     }
     .ticket-title .child-name {
       color: black;
@@ -95,7 +91,7 @@
       width: 287px;
       height: 48px;
       left: 72px;
-      top: 779px;
+      top: 725px;
       background: #208FFF;
       border-radius: 4px;
       display: none;
@@ -115,7 +111,7 @@
       height: 584.94px;
       position: absolute;
       left: 56px;
-      top: 178px;
+      top: 124px;
     }
     .ticket-bottom {
       width: 320px;
@@ -215,7 +211,7 @@
       height: 48px;
       position: absolute;
       left: 0;
-      top: 54px;
+      top: 0;
       background: #FAFAFA;
     }
     .back-btn {
@@ -262,7 +258,7 @@
       width: 287px;
       height: 48px;
       left: 72px;
-      top: 709px;
+      top: 655px;
       background: #208FFF;
       border-radius: 12px;
       display: flex;
@@ -302,13 +298,21 @@
       0% { width: 0; }
       100% { width: 100%; }
     }
+    img[alt="page3 background"] {
+      position: absolute; 
+      top: 118px; 
+      left: 50%; 
+      transform: translateX(-50%);
+      width: 432px; 
+      height: 600px; 
+      z-index: 0;
+    }
   </style>
 </head>
 <body>
   <div class="frame-wrapper" id="page3">
     <div class="page3-background">
-      <img src="assets/pawmotion_3page_2.svg" alt="page3 background"
-           style="position:absolute; top:172px; left:50%; transform:translateX(-50%); width:432px; height:600px; z-index:0;" />
+      <img src="assets/pawmotion_3page_2.svg" alt="page3 background" />
       <div class="ticket-title">
         <span id="ticketChildName" class="child-name"></span><span class="suffix">의 감정 티켓 발행 완료!</span>
       </div>
@@ -344,34 +348,29 @@
   </div>
 
   <script>
-    // 화면 크기에 따라 .frame-wrapper scale 적용
     function scaleFrame() {
       var w = window.innerWidth;
       var h = window.innerHeight;
-      var scaleValue = Math.min(w / 432, h / 874);
+      var scaleValue = Math.min(w / 432, h / 820);
       var frameWrapper = document.querySelector('.frame-wrapper');
       frameWrapper.style.transform = "translate(-50%, -50%) scale(" + scaleValue + ")";
     }
     window.addEventListener('load', scaleFrame);
     window.addEventListener('resize', scaleFrame);
 
-    // URL 파라미터에서 데이터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const childName = urlParams.get('childName') || "이름 없음";
     document.getElementById("ticketChildName").textContent = childName;
 
-    // 현재 날짜 삽입 (YYYY.MM.DD 형식)
     const today = new Date();
     const formattedDate = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
     document.getElementById("currentDate").textContent = formattedDate;
 
-    // 상태 변수
     let isImageUploaded = false;
     let uploadedImage = null;
     let model = null;
     let isModelLoaded = false;
 
-    // 감정 매핑
     const emotionMapping = {
       0: { text: "😣 ANGRY", class: "angry" },
       1: { text: "😢 SAD", class: "sad" },
@@ -379,7 +378,6 @@
       3: { text: "😄 HAPPY", class: "happy" }
     };
 
-    // 모델 로드 함수
     async function loadModel() {
       try {
         model = await tf.loadLayersModel('model/model.json');
@@ -392,7 +390,6 @@
       }
     }
 
-    // 분석 버튼 상태 확인 및 업데이트
     function checkAnalyzeButtonState() {
       const analyzeBtn = document.getElementById("analyzeBtn");
       if (isImageUploaded && isModelLoaded) {
@@ -402,7 +399,6 @@
       }
     }
 
-    // 이미지 전처리 함수
     async function preprocessImage(imageElement) {
       let tensor = tf.browser.fromPixels(imageElement);
       const cropRatio = 0.85;
@@ -418,7 +414,6 @@
       return tensor;
     }
 
-    // 이미지 업로드 함수
     function addImage(event) {
       const file = event.target.files[0];
       if (file) {
@@ -444,7 +439,6 @@
       }
     }
 
-    // 감정 분석 함수
     async function analyzeEmotion() {
       const analyzeBtn = document.getElementById("analyzeBtn");
       const analyzeBtnText = document.getElementById("analyzeBtnText");
@@ -489,7 +483,6 @@
       }
     }
 
-    // 랜덤 코드 생성 함수
     function generateRandomCode() {
       const part1 = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
       const part2 = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
@@ -498,42 +491,108 @@
       return `${part1}-${part2}-${part3}-${part4}`;
     }
 
-    // 이미지로 저장하기(전체 화면 캡처) 함수
     function saveAsImage() {
-      const frameWrapper = document.querySelector(".frame-wrapper");
+      console.log("saveAsImage 함수 호출됨"); // 디버깅 로그
 
-      // 현재 scale 상태에 따라 출력 해상도가 달라지므로
-      // html2canvas에 {scale: window.devicePixelRatio} 옵션을 주면
-      // 화면에 보이는 대로 캡처됩니다.
-      html2canvas(frameWrapper, { scale: window.devicePixelRatio })
-        .then(canvas => {
-          const link = document.createElement('a');
-          link.download = 'ticket.png';
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        })
-        .catch(err => {
-          console.error("이미지 저장 오류:", err);
-          alert("이미지를 저장하는 중 오류가 발생했습니다.");
-        });
+      const frameWrapper = document.querySelector('.frame-wrapper');
+      const ticketTitle = document.querySelector('.ticket-title');
+      const saveBtn = document.querySelector('.save-btn');
+      const analyzeBtn = document.querySelector('.analyze-btn');
+      const topBar = document.querySelector('.top-bar');
+      const addImageBtn = document.querySelector('.add-image-btn');
+
+      // 원래 스타일 저장
+      const originalStyles = {
+        ticketTitle: ticketTitle.style.display,
+        saveBtn: saveBtn.style.display,
+        analyzeBtn: analyzeBtn.style.display,
+        topBar: topBar.style.display,
+        addImageBtn: addImageBtn.style.display,
+        transform: frameWrapper.style.transform,
+        left: frameWrapper.style.left,
+        top: frameWrapper.style.top
+      };
+
+      // 제외할 요소 숨기기
+      ticketTitle.style.display = 'none';
+      saveBtn.style.display = 'none';
+      analyzeBtn.style.display = 'none';
+      topBar.style.display = 'none';
+      addImageBtn.style.display = 'none';
+
+      // 스케일링 제거 및 원래 크기로 설정
+      frameWrapper.style.transform = 'none';
+      frameWrapper.style.left = '0';
+      frameWrapper.style.top = '0';
+
+      html2canvas(frameWrapper, {
+        width: 432,
+        height: 820,
+        scale: 2, // 고해상도 캡처
+        useCORS: true, // 외부 이미지 로드 시 필요
+        logging: true // 디버깅용 로그 활성화
+      }).then(canvas => {
+        // 스타일 복원
+        ticketTitle.style.display = originalStyles.ticketTitle;
+        saveBtn.style.display = originalStyles.saveBtn;
+        analyzeBtn.style.display = originalStyles.analyzeBtn;
+        topBar.style.display = originalStyles.topBar;
+        addImageBtn.style.display = originalStyles.addImageBtn;
+        frameWrapper.style.transform = originalStyles.transform;
+        frameWrapper.style.left = originalStyles.left;
+        frameWrapper.style.top = originalStyles.top;
+
+        // 이미지 다운로드
+        const link = document.createElement('a');
+        link.download = 'ticket.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        console.log("이미지 저장 완료");
+      }).catch(err => {
+        console.error("html2canvas 오류:", err);
+        // 오류 발생 시 스타일 복원
+        ticketTitle.style.display = originalStyles.ticketTitle;
+        saveBtn.style.display = originalStyles.saveBtn;
+        analyzeBtn.style.display = originalStyles.analyzeBtn;
+        topBar.style.display = originalStyles.topBar;
+        addImageBtn.style.display = originalStyles.addImageBtn;
+        frameWrapper.style.transform = originalStyles.transform;
+        frameWrapper.style.left = originalStyles.left;
+        frameWrapper.style.top = originalStyles.top;
+        alert("이미지 저장 중 오류가 발생했습니다. 콘솔을 확인해주세요.");
+      });
     }
 
-    // 텍스트 박스(일기 입력 영역) 클릭 시 스크롤 가능하도록 이벤트 추가
     window.addEventListener("load", function() {
       loadModel();
+
       const ticketComment = document.getElementById("ticketComment");
       ticketComment.addEventListener("focus", function() {
+        window.removeEventListener('resize', scaleFrame);
         document.body.style.overflow = "auto";
         ticketComment.scrollIntoView({ behavior: "smooth", block: "center" });
       });
       ticketComment.addEventListener("blur", function() {
+        window.addEventListener('resize', scaleFrame);
+        scaleFrame();
         document.body.style.overflow = "hidden";
       });
 
-      // saveBtn 클릭 시 이미지 저장 함수 호출
+      // saveBtn 이벤트 리스너 연결
       const saveBtn = document.getElementById("saveBtn");
-      saveBtn.addEventListener("click", saveAsImage);
+      if (saveBtn) {
+        saveBtn.addEventListener("click", function() {
+          console.log("이미지로 저장하기 버튼 클릭됨"); // 디버깅 로그
+          saveAsImage();
+        });
+      } else {
+        console.error("saveBtn 요소를 찾을 수 없습니다.");
+      }
     });
   </script>
 </body>
 </html>
+
+지금 문제가
+현재 화면에 보이는
+가로 새로 비율이 아니게 이미지가 저장이 되고 있어 해결해줘
