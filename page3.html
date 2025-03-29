@@ -492,7 +492,7 @@
     }
 
     function saveAsImage() {
-      console.log("saveAsImage 함수 호출됨"); // 디버깅 로그
+      console.log("saveAsImage 함수 호출됨");
 
       const frameWrapper = document.querySelector('.frame-wrapper');
       const ticketTitle = document.querySelector('.ticket-title');
@@ -501,46 +501,38 @@
       const topBar = document.querySelector('.top-bar');
       const addImageBtn = document.querySelector('.add-image-btn');
 
-      // 원래 스타일 저장
+      // 원래 display 스타일 저장
       const originalStyles = {
         ticketTitle: ticketTitle.style.display,
         saveBtn: saveBtn.style.display,
         analyzeBtn: analyzeBtn.style.display,
         topBar: topBar.style.display,
         addImageBtn: addImageBtn.style.display,
-        transform: frameWrapper.style.transform,
-        left: frameWrapper.style.left,
-        top: frameWrapper.style.top
       };
 
-      // 제외할 요소 숨기기
+      // 숨길 요소들 display 속성 변경
       ticketTitle.style.display = 'none';
       saveBtn.style.display = 'none';
       analyzeBtn.style.display = 'none';
       topBar.style.display = 'none';
       addImageBtn.style.display = 'none';
 
-      // 스케일링 제거 및 원래 크기로 설정
-      frameWrapper.style.transform = 'none';
-      frameWrapper.style.left = '0';
-      frameWrapper.style.top = '0';
+      // 현재 화면에 보이는 크기 가져오기
+      const rect = frameWrapper.getBoundingClientRect();
 
       html2canvas(frameWrapper, {
-        width: 432,
-        height: 820,
+        width: rect.width,
+        height: rect.height,
         scale: 2, // 고해상도 캡처
-        useCORS: true, // 외부 이미지 로드 시 필요
-        logging: true // 디버깅용 로그 활성화
+        useCORS: true,
+        logging: true
       }).then(canvas => {
-        // 스타일 복원
+        // 숨겼던 요소들 복원
         ticketTitle.style.display = originalStyles.ticketTitle;
         saveBtn.style.display = originalStyles.saveBtn;
         analyzeBtn.style.display = originalStyles.analyzeBtn;
         topBar.style.display = originalStyles.topBar;
         addImageBtn.style.display = originalStyles.addImageBtn;
-        frameWrapper.style.transform = originalStyles.transform;
-        frameWrapper.style.left = originalStyles.left;
-        frameWrapper.style.top = originalStyles.top;
 
         // 이미지 다운로드
         const link = document.createElement('a');
@@ -550,15 +542,12 @@
         console.log("이미지 저장 완료");
       }).catch(err => {
         console.error("html2canvas 오류:", err);
-        // 오류 발생 시 스타일 복원
+        // 오류 발생 시 숨겼던 요소들 복원
         ticketTitle.style.display = originalStyles.ticketTitle;
         saveBtn.style.display = originalStyles.saveBtn;
         analyzeBtn.style.display = originalStyles.analyzeBtn;
         topBar.style.display = originalStyles.topBar;
         addImageBtn.style.display = originalStyles.addImageBtn;
-        frameWrapper.style.transform = originalStyles.transform;
-        frameWrapper.style.left = originalStyles.left;
-        frameWrapper.style.top = originalStyles.top;
         alert("이미지 저장 중 오류가 발생했습니다. 콘솔을 확인해주세요.");
       });
     }
@@ -582,7 +571,7 @@
       const saveBtn = document.getElementById("saveBtn");
       if (saveBtn) {
         saveBtn.addEventListener("click", function() {
-          console.log("이미지로 저장하기 버튼 클릭됨"); // 디버깅 로그
+          console.log("이미지로 저장하기 버튼 클릭됨");
           saveAsImage();
         });
       } else {
